@@ -9,9 +9,19 @@ export default class UsersController {
    * Display a list of resource
    */
   async index({response}: HttpContext) {
-    return response.status(200).json({
-      users: await this.userService.all()
-    });
+    try {
+      return response.status(200).json({
+        message: "get users",
+        users: await this.userService.all()
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+        return response.status(500).json({
+          message: "internal server error"
+        });
+      }
+    }
   }
 
   /**
@@ -26,17 +36,18 @@ export default class UsersController {
     try {
       await this.userService.createUser(request.body());
       return response.status(200).json({
-        "message": "success create user"
+        message: "success create user"
       });
     } catch (error) {
       if (error instanceof Error) {
         if (error.message.includes("Duplicate entry")) {
           return response.status(409).json({
-            "message": "username has been used"
+            message: "username has been used"
           });
         }
-        return response.status(400).json({
-          "message": error.message
+        console.error(error.message);
+        return response.status(500).json({
+          message: "internal server error"
         });
       }
     }
@@ -46,8 +57,22 @@ export default class UsersController {
    * Show individual record
    */
   async show({ params, response }: HttpContext) {
-    const user = await this.userService.findByUsername(params.id)
-    return response.status(200).json({ user })
+    try {
+      const user = await this.userService.findByUsername(params.id)
+      return response.status(200).json({ user })
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.name === "E_ROW_NOT_FOUND") {
+          return response.status(404).json({
+            message: "username not found"
+          });
+        }
+        console.error(error)
+        return response.status(500).json({
+          message: "internal server error"
+        });
+      }
+    }
   }
 
   /**
@@ -62,17 +87,23 @@ export default class UsersController {
     try {
       await this.userService.updateUser(params.id, request.body());
       return response.status(200).json({
-        "message": "success update user"
+        message: "success update user"
       });
     } catch (error) {
       if (error instanceof Error) {
         if (error.message.includes("Duplicate entry")) {
           return response.status(409).json({
-            "message": "username has been used"
+            message: "username has been used"
           });
         }
-        return response.status(400).json({
-          "message": error.message
+        if (error.name === "E_ROW_NOT_FOUND") {
+          return response.status(404).json({
+            message: "user not found"
+          });
+        }
+        console.error(error);
+        return response.status(500).json({
+          message: "internal server error"
         });
       }
     }
@@ -83,15 +114,20 @@ export default class UsersController {
    */
   async destroy({ params, response }: HttpContext) {
     try {
-      const user  = await this.userService.deleteUser(params.id);
+      await this.userService.deleteUser(params.id);
       return response.status(200).json({
-        "message": "success update user",
-        user,
+        message: "success deleted user",
       });
     } catch (error) {
       if (error instanceof Error) {
-        return response.status(400).json({
-          "message": error.message
+        if (error.name === "E_ROW_NOT_FOUND") {
+          return response.status(404).json({
+            message: "user not found"
+          });
+        }
+        console.error(error)
+        return response.status(500).json({
+          message: "internal server error"
         });
       }
     }

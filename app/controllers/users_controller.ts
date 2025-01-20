@@ -1,6 +1,5 @@
 import { UserService } from '#services/user_service';
 import { inject } from '@adonisjs/core';
-import { Exception } from '@adonisjs/core/exceptions';
 import type { HttpContext } from '@adonisjs/core/http'
 
 @inject()

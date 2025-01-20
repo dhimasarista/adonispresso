@@ -5,7 +5,7 @@ test.group('User model', () => {
   test('create user', async ({ assert }) => {
     const user = await User.create({
       email: "dhimasarista@email.com",
-      password: "dhimas_test123",
+      password: "#Dhimas123",
       username: "dhimasarista"
     })
 

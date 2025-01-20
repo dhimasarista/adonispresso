@@ -15,7 +15,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
   declare id: string
 
   @column()
-  declare username: string | null
+  declare username: string
 
   @column()
   declare email: string
@@ -36,12 +36,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
     }
   }
   @beforeCreate()
-  public static async setId(user: User){
+  static async setId(user: User) {
     user.id = uuidv7()
-  }
-  @beforeCreate()
-  public static async regexEmail(user: User){
-    const emailRegex: RegExp =  /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    emailRegex.test(user.email)
   }
 }

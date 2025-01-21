@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-nav-layout="vertical" data-theme-mode="light" data-header-styles="light"
+  data-width="fullwidth" data-menu-styles="light" data-toggled="close">
+  <head>
+    <meta charset="UTF-8">
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title> {{ title || "Dashboard" }} </title>
+    <meta name="Description" content="">
+    <meta name="Author" content="dhimasarista">
+    <meta name="keywords" content="">
+
+    <link rel="icon" href="../assets/images/brand-logos/favicon.ico" type="image/x-icon">
+    <script src="../assets/libs/choices.js/public/assets/scripts/choices.min.js"></script>
+    <script src="../assets/js/main.js"></script>
+    {{{ await $slots.styles() }}}
+  </head>
+<body>
+
+  @include('partials/switcher')
+  @include('partials/loader')
+
+  <div class="page">
+    @include('partials/app_header')
+    @include('partials/app_sidebar')
+    <!-- Start::app-content -->
+    <div class="main-content app-content">
+      <div class="container-fluid">
+          {{{ await $slots.main() }}}
+      </div>
+    </div>
+    <!-- End::app-content -->
+    @include("partials/footer")
+
+  </div>
+  @include('partials/scroll_top')
+  {{{ await $slots.scripts() }}}
+
+</body>
+</html>

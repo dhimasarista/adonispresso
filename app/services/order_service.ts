@@ -14,11 +14,27 @@ export class OrderService {
     )
     return orders[0].$extras;
   }
-  public async getOrderWithItems(){
-    const orders = await Order.query().preload("orderItems")
-    .orderBy("created_at", "desc")
-    // .paginate();
-    return orders;
+  public async getOrderWithItems(offset: number, length: number, search: string){
+    const ordersQuery = Order.query().preload("orderItems", (query) => {
+      query.preload("product", (subQuery) => {
+        subQuery.select("id", "name")
+      })
+    })
+
+    if (search) {
+      ordersQuery.where('total_amount', 'LIKE', "%$search%")
+    }
+
+    const orders = await ordersQuery.orderBy("created_at", "desc")
+    .limit(length)
+    .offset(offset)
+
+    const total = await Order.query().count("*") // data ["count(*"]
+    return {
+        recordsTotal: total[0].$extras["count(*)"], // Total semua records tanpa filter
+        recordsFiltered: total[0].$extras["count(*)"], // Bisa disesuaikan jika ada filter
+        data: orders
+    }
   }
 
   public async createOrder(data: any) {

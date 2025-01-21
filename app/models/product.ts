@@ -1,6 +1,8 @@
 import { DateTime } from 'luxon'
 import { uuidv7 } from "uuidv7";
-import { BaseModel, beforeCreate, column } from '@adonisjs/lucid/orm'
+import { BaseModel, beforeCreate, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
+import type { HasMany } from '@adonisjs/lucid/types/relations';
+import OrderItem from './order_item.js';
 
 export default class Product extends BaseModel {
   @column({ isPrimary: true })
@@ -22,4 +24,7 @@ export default class Product extends BaseModel {
   public static async setId(p: Product){
     p.id = uuidv7()
   }
+
+  @hasMany(() => OrderItem, {})
+  declare orderItem: HasMany<typeof OrderItem>
 }

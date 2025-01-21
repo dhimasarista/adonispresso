@@ -8,12 +8,29 @@ export default class OrdersController {
     /**
      * Display a list of resource
      */
+    async render({response, view}: HttpContext){
+      try {
+        return view.render("pages/order", {
+
+        })
+      } catch (error) {
+        if (error instanceof Error) {
+          return view.render("errors/server_error", {
+            error: {
+              message: error.name,
+              code: 500
+            }
+          })
+        }
+      }
+    }
+
     async index({response}: HttpContext) {
       try {
-        const orders = this.orderService.getOrderWithItems()
+        const orders = await this.orderService.getOrderWithItems()
         return response.status(200).json({
           message: "get orders",
-          orders
+          orders: orders
         });
       } catch (error) {
         if (error instanceof Error) {
@@ -24,5 +41,4 @@ export default class OrdersController {
         }
       }
     }
-
 }

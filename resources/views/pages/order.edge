@@ -187,7 +187,7 @@
           </div>
           <div class="card-body">
             <div class="table-responsive">
-              <table id="file-export" class="table table-bordered text-nowrap w-100">
+              <table id="datatable-table" class="table table-bordered text-nowrap w-100">
                 <thead>
                   <tr>
                     <th>Order ID</th>
@@ -199,19 +199,6 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>123456789</td>
-                    <td>123456789</td>
-                    <td>123456789</td>
-                    <td>123456789</td>
-                    <td>123456789</td>
-                    <td>
-                      <div class="btn-list">
-                          <div class="btn btn-secondary btn-wave" onclick="checkPayment('${data}', '${row.id}')">Detail</div>
-                          <div class="btn btn-success btn-wave" onclick="checkPaymentStatus('${row.id}')">Status</div>
-                      </div>
-                    </td>
-                  </tr>
                 </tbody>
               </table>
             </div>
@@ -243,7 +230,7 @@
 @end
 <script>
   // file export datatable
-  $('#file-export').DataTable({
+  $('#datatable-table').DataTable({
       dom: 'Bfrtip',
       buttons: [
           'copy', 'csv', 'excel', 'pdf', 'print'
@@ -252,6 +239,70 @@
           searchPlaceholder: 'Cari...',
           sSearch: '',
       },
+        ajax: {
+          url: "/orders/list",
+          type: "GET",
+          dataSrc: "orders"
+      },
+      columns:[
+          {
+              data: 'id',
+              render: function(data, type, row) {
+                  return data;
+              }
+          },
+          {
+              data: 'totalAmount',
+              render: function(data, type, row) {
+                  return `IDR ${data}`;
+              }
+          },
+          {
+              data: null,
+              render: function(data, type, row) {
+                  return type;
+              }
+          },
+          {
+              data: 'status',
+              render: function(data, type, row) {
+                  let badge = null;
+                  switch (data) {
+                      case "success":
+                          badge = 'bg-success'
+                          break;
+                      case "cancel":
+                          badge = 'bg-danger'
+                          break;
+                      case "pending":
+                          badge = 'bg-warning'
+                          break;
+                      default:
+                          badge = 'bg-dark text-white'
+                          break;
+                  }
+                  return `<span class="badge ${badge}">${data}</span>`;
+              }
+          },
+          {
+              data: 'createdAt',
+              render: function(data, type, row) {
+                  const formattedDate = new Date(data).toLocaleString("id-ID");
+                  return formattedDate;
+              }
+          },
+          {
+              data: "transactionToken",
+              render: function(data, type, row) {
+                  return `
+                  <div class="btn-list">
+                      <div class="btn btn-secondary btn-wave" onclick="checkPayment('${data}', '${row.id}')">Detail</div>
+                      <div class="btn btn-success btn-wave" onclick="checkPaymentStatus('${row.id}')">Status</div>
+                  </div>
+                  `;
+              }
+          },
+      ]
   });
   // file export datatable
 </script>

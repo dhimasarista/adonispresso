@@ -11,10 +11,10 @@ export default class OrderItem extends BaseModel {
     @column()
     declare quantity: number
 
-    @column({})
+    @column()
     declare orderId: string
 
-    @column({})
+    @column()
     declare productId: string
 
     @column.dateTime({ autoCreate: true })
@@ -27,10 +27,10 @@ export default class OrderItem extends BaseModel {
     declare deletedAt: DateTime | null
 
     @beforeCreate()
-    static async setId(order: Order) {
-      order.id = uuidv7()
+    static async setId(orderItem: OrderItem) {
+      orderItem.id = uuidv7()
     }
 
-  @belongsTo(() => Order)
-  declare order: BelongsTo<typeof Order>
+    @belongsTo(() => Order)
+    declare order: BelongsTo<typeof Order>
 }

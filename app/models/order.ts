@@ -31,8 +31,6 @@ export default class Order extends BaseModel {
     order.id = uuidv7()
   }
 
-  @hasMany(() => OrderItem, {
-    foreignKey: "order_id"
-  })
+  @hasMany(() => OrderItem, {})
   declare orderItems: HasMany<typeof OrderItem>
 }

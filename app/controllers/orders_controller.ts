@@ -1,4 +1,5 @@
 import { OrderService } from '#services/order_service';
+import env from '#start/env';
 import { inject } from '@adonisjs/core';
 import type { HttpContext } from '@adonisjs/core/http'
 
@@ -8,20 +9,25 @@ export default class OrdersController {
     /**
      * Display a list of resource
      */
-    async render({response, view}: HttpContext){
+    async render({view}: HttpContext){
+      let orders = null;
+      let error = null;
       try {
-        return view.render("pages/order", {
-
-        })
-      } catch (error) {
-        if (error instanceof Error) {
-          return view.render("errors/server_error", {
-            error: {
-              message: error.name,
+        orders = await this.orderService.getOrderStatistics()
+      } catch (err) {
+        if (err instanceof Error) {
+          console.error(err.message);
+          if (env.get("NODE_ENV", "development")) {
+            error = {
+              message: err.message,
               code: 500
             }
-          })
+          }
         }
+      } finally {
+        return view.render("pages/order", {
+          orders, error
+        })
       }
     }
 

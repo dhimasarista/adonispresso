@@ -33,18 +33,19 @@
           <i class="bx bx-crown align-middle"></i> Plan Upgrade
         </button>
         <button class="btn btn-dark btn-wave me-0">
-          <i class="bi bi-clipboard-plus-fill align-middle"></i> New Order
+          <i class="bi bi-clipboard-plus-fill align-middle"></i> New Product
         </button>
       </div>
     </div>
     <!-- Page Header Close -->
 
-    <div class="alert alert-secondary alert-dismissible fs-15 fade show mb-4">
-      <strong class="text-primary">Error Message</strong> will show here <strong
-        class="text-primary">jquery</strong> cdn link.
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"><i
-          class="bi bi-x"></i></button>
-    </div>
+    @if(error)
+      <div class="alert alert-secondary alert-dismissible fs-15 fade show mb-4">
+        {{ error.message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"><i
+            class="bi bi-x"></i></button>
+      </div>
+    @end
     <!-- Start:: row-4 -->
     <div class="row">
       <div class="col-xl-12">
@@ -63,7 +64,7 @@
                               <div>
                                   <span class="d-block mb-1 mt-2">Total Amount</span>
                               <div class="d-flex align-items-center gap-2">
-                                  <h4 class="fw-medium mb-0">IDR <span class="count-up" data-count="">100.000</span> </h4>
+                                  <h4 class="fw-medium mb-0">IDR <span class="count-up" data-count="">{{ orders.total }}</span> </h4>
                                   <span class="badge bg-danger-transparent">12,345</span>
                               </div>
                               </div>
@@ -90,7 +91,7 @@
                               <div>
                                   <span class="d-block mb-1 mt-2">Total Order</span>
                               <div class="d-flex align-items-center gap-2">
-                                  <h4 class="fw-medium mb-0"><span class="count-up" data-count="">18900</span></h4>
+                                  <h4 class="fw-medium mb-0"><span class="count-up" data-count="">{{ orders.total_order }}</span></h4>
                                   <span class="badge bg-danger-transparent">12,345</span>
                               </div>
                               </div>
@@ -113,7 +114,7 @@
                               <div>
                                   <span class="d-block mb-1 mt-2">Total Paid</span>
                               <div class="d-flex align-items-center gap-2">
-                                  <h4 class="fw-medium mb-0"><span class="count-up" data-count="471">325</span> </h4>
+                                  <h4 class="fw-medium mb-0"><span class="count-up" data-count="">{{ orders.success }}</span> </h4>
                                   <span class="badge bg-success-transparent">12,345</span>
                               </div>
                               </div>
@@ -140,7 +141,7 @@
                               <div>
                                   <span class="d-block mb-1 mt-2">Pending Order</span>
                               <div class="d-flex align-items-center gap-2">
-                                  <h4 class="fw-medium mb-0"><span class="count-up" data-count="471">236</span> </h4>
+                                  <h4 class="fw-medium mb-0"><span class="count-up" data-count="{{ orders.pending }}"></span> </h4>
                                   <span class="badge bg-danger-transparent">12,345</span>
                               </div>
                               </div>
@@ -167,7 +168,7 @@
                               <div>
                                   <span class="d-block mb-1 mt-2">Cancelled Order</span>
                               <div class="d-flex align-items-center gap-2">
-                                  <h4 class="fw-medium mb-0"><span class="count-up" data-count="471">132</span> </h4>
+                                  <h4 class="fw-medium mb-0"><span class="count-up" data-count="">{{ orders.cancel }}</span> </h4>
                                   <span class="badge bg-success-transparent">12,345</span>
                               </div>
                               </div>
@@ -183,7 +184,7 @@
       </div>
         <div class="card custom-card">
           <div class="card-header">
-            <div class="card-title">File Export Datatable</div>
+            <div class="card-title">Data Table</div>
           </div>
           <div class="card-body">
             <div class="table-responsive">

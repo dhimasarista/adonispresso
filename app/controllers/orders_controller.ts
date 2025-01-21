@@ -37,12 +37,17 @@ export default class OrdersController {
       })
     }
 
-    async index({response}: HttpContext) {
+    async index({response, request}: HttpContext) {
       try {
-        const orders = await this.orderService.getOrderWithItems()
+        const page = request.input("start", 0)
+        const perPage = request.input("length", 10)
+        const search = request.input("search.value", "")
+        const orders = await this.orderService.getOrderWithItems(page, perPage, search)
         return response.status(200).json({
           message: "get orders",
-          orders: orders
+          recordsTotal: orders.recordsTotal,
+          recordsFiltered: orders.recordsFiltered,
+          orders: orders.data
         });
       } catch (error) {
         if (error instanceof Error) {

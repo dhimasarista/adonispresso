@@ -10,10 +10,6 @@ export class OrderService {
       Order.query().count("*").where("status", "pending").as("pending"),
       Order.query().count("*").where("status", "cancel").as("cancel"),
     )
-
-    console.log(orders);
-
-
     return orders[0].$extras;
   }
   public async getOrderWithItems(){

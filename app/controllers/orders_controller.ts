@@ -31,6 +31,12 @@ export default class OrdersController {
       }
     }
 
+    async create({request, response}: HttpContext) {
+      return response.status(200).json({
+        data: await this.orderService.createOrder(request.body())
+      })
+    }
+
     async index({response}: HttpContext) {
       try {
         const orders = await this.orderService.getOrderWithItems()

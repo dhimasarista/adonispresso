@@ -12,7 +12,7 @@ export default class Order extends BaseModel {
   declare status: string
 
   @column({ columnName: "total_amount" })
-  declare totalAmount: string
+  declare totalAmount: number
 
   @column()
   declare transactionToken: string

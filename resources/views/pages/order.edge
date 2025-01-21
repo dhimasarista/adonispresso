@@ -232,6 +232,12 @@
 <script>
   // file export datatable
   $('#datatable-table').DataTable({
+      "serverSide": true,
+      "processing": true,
+      "paging": true,
+      "searching": { "regex": true },
+      "lengthMenu": [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "All"] ],
+      "pageLength": 10,
       dom: 'Bfrtip',
       buttons: [
           'copy', 'csv', 'excel', 'pdf', 'print'
@@ -259,9 +265,13 @@
               }
           },
           {
-              data: null,
+              data: "orderItems",
               render: function(data, type, row) {
-                  return type;
+                var newData = [];
+                data.forEach(element => {
+                    newData.push(`${element.name} (${element.quantity})`)
+                });
+                return newData.join(", ");
               }
           },
           {
@@ -307,4 +317,3 @@
   });
   // file export datatable
 </script>
-

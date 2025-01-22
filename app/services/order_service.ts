@@ -2,6 +2,9 @@ import Order from '#models/order'
 import OrderItem from '#models/order_item';
 import Product from '#models/product';
 import { uuidv7 } from 'uuidv7';
+import db from '@adonisjs/lucid/services/db'
+import { TransactionClientContract } from '@adonisjs/lucid/types/database';
+import { DateTime } from 'luxon';
 
 export class OrderService {
   public async getOrderStatistics() {
@@ -39,69 +42,73 @@ export class OrderService {
   }
 
   public async createOrder(data: any) {
-    const orderId = uuidv7(); // Generate UUID untuk order
     let totalAmount = 0;
 
-    // Buat order baru
-    const order = await Order.create({
-      id: orderId,
-      status: "pending",
-      totalAmount: 0, // Awalnya 0, akan diupdate setelah menghitung totalAmount
-      transactionToken: "",
-    });
+    await db.transaction(async trx => {
+      const order = await Order.create({
+        status: "pending",
+        totalAmount: 0, // value awal
+        transactionToken: "",
+      }, { client: trx })
 
-    // Pastikan order berhasil dibuat dan disimpan
-    if (!order.$isPersisted) {
-      throw new Error("Failed to create order");
-    }
-
-    // Ambil daftar product_id dari data
-    const productIds = data["products"].map((value: any) => value["product_id"]);
-
-    // Query produk dari database
-    const products = await Product.query()
-      .whereIn("id", productIds)
-      .exec();
-
-    // Konversi produk menjadi array JSON
-    const productArray = products.map((product) => product.toJSON());
-
-    // Cek apakah semua product_id di data["products"] valid
-    const orderItems: any = [];
-    data["products"].forEach((product: any) => {
-      const productExist = productArray.find(
-        (p: any) => p.id === product["product_id"]
-      );
-      if (!productExist) {
-        throw new Error(`Product with ID ${product["product_id"]} not found`);
+      // Pastikan order berhasil dibuat dan disimpan
+      if (!order.$isPersisted) {
+        throw new Error("failed to create order");
       }
 
-      // Hitung jumlah total
-      const amount = product["quantity"] * productExist.price; // Asumsikan ada kolom "price"
-      totalAmount += amount;
+      // Ambil daftar product_id dari data
+      const productIds = data["products"].map((value: any) => value["product_id"]);
+      // Query produk dari database
+      const products = await Product.query()
+        .whereIn("id", productIds)
+        .exec();
 
-      // Siapkan data order item
-      orderItems.push({
-        id: uuidv7(),
-        quantity: product["quantity"],
-        order_id: orderId, // Pastikan order_id sesuai dengan order yang dibuat
-        product_id: productExist.id,
-        created_at: new Date(),
-        updated_at: new Date(),
+
+      // Konversi produk menjadi array JSON
+      const productArray = products.map((product) => product.toJSON());
+
+      // Cek apakah semua product_id di data["products"] valid
+      const orderItems: any = [];
+      data["products"].forEach((product: any) => {
+        // mencari produk sesuai id yang dikirim client
+        const productExist = productArray.find((p: any) => {
+          return p.id === product["product_id"]
+        });
+
+        // jika produk tidak ditemukan, throw error
+        if (!productExist) {
+          throw new Error(`Product with ID ${product["product_id"]} not found`);
+        }
+
+        // Hitung jumlah total
+        const amount = product["quantity"] * productExist.price; // Asumsikan ada kolom "price"
+        totalAmount += amount;
+
+        // Siapkan data order item
+        orderItems.push({
+          id: uuidv7(),
+          quantity: product["quantity"],
+          order_id: order.$attributes.id,
+          product_id: productExist.id,
+        });
       });
-    });
 
-    // Tambahkan item ke tabel order_items
-    await OrderItem.createMany(orderItems);
+      // Tambahkan item ke tabel order_items
+      await OrderItem.createMany(orderItems, {
+        client: trx
+      });
 
-    // Update totalAmount pada order setelah semua item ditambahkan
-    order.totalAmount = totalAmount;
-    await order.save();
+      // Update totalAmount pada order setelah semua item ditambahkan
+      order.totalAmount = totalAmount;
+      await order.save();
 
-    return {
-      order,
-      orderItems,
-    };
+      await trx.commit()
+      return {
+        order,
+        orderItems,
+      };
+
+    })
   }
 
 }

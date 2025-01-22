@@ -283,7 +283,7 @@ loadDefaultMenu: true,
         render: function (data, type, row) {
           var newData = [];
           data.forEach(element => {
-            newData.push(`${element.name} (${element.quantity})`)
+            newData.push(`${element.product.name} (${element.quantity})`)
           });
           return newData.join(", ");
         }

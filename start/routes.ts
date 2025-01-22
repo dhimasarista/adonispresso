@@ -19,4 +19,5 @@ router.group(() => {
   router.get("", [OrdersController, "render"])
   router.post("", [OrdersController, "create"])
   router.get("/list", [OrdersController, "index"])
+  router.get("/statistics", [OrdersController, "renderOrderStatistics"])
 }).prefix("/orders")

@@ -1,15 +1,18 @@
 import { OrderService } from '#services/order_service';
+import { ProductService } from '#services/product_service';
 import env from '#start/env';
 import { inject } from '@adonisjs/core';
 import type { HttpContext } from '@adonisjs/core/http'
-
 @inject()
 export default class OrdersController {
-    constructor(protected orderService: OrderService){}
+    constructor(
+      protected orderService: OrderService,
+      protected productService: ProductService
+    ){}
     /**
      * Display a list of resource
      */
-    async render({view}: HttpContext){
+    async renderListOrder({view}: HttpContext){
       try {
         return view.render("pages/list_order")
       } catch (err) {
@@ -44,6 +47,13 @@ export default class OrdersController {
       }
     }
 
+    async renderNewOrder({view, response}: HttpContext){
+      const products = await this.productService.list()
+      return view.render("pages/new_order", {
+        products
+      })
+    }
+
     async create({request, response}: HttpContext) {
       try {
         const order = await this.orderService.createOrder(request.body())
@@ -66,6 +76,13 @@ export default class OrdersController {
         const perPage = request.input("length", 10)
         const search = request.input("search.value", "")
         const orders = await this.orderService.getOrderWithItems(page, perPage, search)
+
+        // jikq list di query param != true
+        // redirect ke order/list
+        if (!request.qs()["list"]) {
+          return response.redirect("/orders/list")
+        }
+
         return response.status(200).json({
           message: "get orders",
           recordsTotal: orders.recordsTotal,

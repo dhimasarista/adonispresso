@@ -10,6 +10,19 @@ export default class OrdersController {
      * Display a list of resource
      */
     async render({view}: HttpContext){
+      try {
+        return view.render("pages/list_order")
+      } catch (err) {
+        if (err instanceof Error) {
+          console.error(err.message);
+          if (env.get("NODE_ENV", "development")) {
+            return view.render("pages/errors/server_error", { error: err })
+          }
+        }
+      }
+    }
+
+    async renderOrderStatistics({view}: HttpContext){
       let orders = null;
       let error = null;
       try {
@@ -25,7 +38,7 @@ export default class OrdersController {
           }
         }
       } finally {
-        return view.render("pages/list_order", {
+        return view.render("components/order_statistics", {
           orders, error
         })
       }

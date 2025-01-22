@@ -25,7 +25,7 @@ export default class OrdersController {
           }
         }
       } finally {
-        return view.render("pages/order", {
+        return view.render("pages/list_order", {
           orders, error
         })
       }

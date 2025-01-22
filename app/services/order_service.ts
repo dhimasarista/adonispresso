@@ -3,9 +3,6 @@ import OrderItem from '#models/order_item';
 import Product from '#models/product';
 import { uuidv7 } from 'uuidv7';
 import db from '@adonisjs/lucid/services/db'
-import { TransactionClientContract } from '@adonisjs/lucid/types/database';
-import { DateTime } from 'luxon';
-
 export class OrderService {
   public async getOrderStatistics() {
     const orders = await Order.query()

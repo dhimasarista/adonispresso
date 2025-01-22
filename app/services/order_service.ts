@@ -43,6 +43,7 @@ export class OrderService {
 
   public async createOrder(data: any) {
     let totalAmount = 0;
+    let orderId = 0;
 
     await db.transaction(async trx => {
       const order = await Order.create({
@@ -52,9 +53,9 @@ export class OrderService {
       }, { client: trx })
 
       // Pastikan order berhasil dibuat dan disimpan
-      if (!order.$isPersisted) {
-        throw new Error("failed to create order");
-      }
+      if (!order.$isPersisted) throw new Error("failed to create order");
+      orderId = order.$attributes.id;
+
 
       // Ambil daftar product_id dari data
       const productIds = data["products"].map((value: any) => value["product_id"]);
@@ -62,7 +63,6 @@ export class OrderService {
       const products = await Product.query()
         .whereIn("id", productIds)
         .exec();
-
 
       // Konversi produk menjadi array JSON
       const productArray = products.map((product) => product.toJSON());
@@ -103,12 +103,9 @@ export class OrderService {
       await order.save();
 
       await trx.commit()
-      return {
-        order,
-        orderItems,
-      };
 
     })
+    return orderId;
   }
 
 }

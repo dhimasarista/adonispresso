@@ -33,8 +33,9 @@ export default class OrdersController {
 
     async create({request, response}: HttpContext) {
       try {
+        const order = await this.orderService.createOrder(request.body())
         return response.status(200).json({
-          data: await this.orderService.createOrder(request.body())
+          message: `success create order ${order}`
         })
       } catch (error) {
         if (error instanceof Error) {

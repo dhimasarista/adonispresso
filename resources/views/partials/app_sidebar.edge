@@ -27,7 +27,7 @@
         <li class="slide__category"><span class="category-name">Dashboards</span></li>
         <!-- End::slide__category -->
         <li class="slide">
-          <a href="icons.html" class="side-menu__item active">
+          <a href="/orders" class="side-menu__item {{ request.url() == "/orders" ? "active": null }}">
             <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 256 256">
               <rect width="256" height="256" fill="none" />
               <polyline points="48 139.59 48 216 208 216 208 139.59" fill="none" stroke="currentColor"
@@ -44,8 +44,8 @@
             <span class="side-menu__label">Order List</span>
           </a>
         </li>
-        <li class="slide has-sub active open">
-          <a href="javascript:void(0);" class="side-menu__item active">
+        <li class="slide has-sub open">
+          <a href="javascript:void(0);" class="side-menu__item">
             <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 256 256">
               <rect width="256" height="256" fill="none"></rect>
               <path d="M32,56H224a0,0,0,0,1,0,0V192a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V56A0,0,0,0,1,32,56Z" fill="none"
@@ -60,7 +60,7 @@
             <span class="side-menu__label">Tables</span>
             <i class="ri-arrow-right-s-line side-menu__angle"></i>
           </a>
-          <ul class="slide-menu child1 active"
+          <ul class="slide-menu child1"
             style="position: relative; left: 0px; top: 0px; margin: 0px; box-sizing: border-box; display: block; transform: translate3d(16px, 755.5px, 0px);"
             data-popper-placement="top">
             <li class="slide side-menu__label1">
@@ -72,8 +72,8 @@
             <li class="slide">
               <a href="grid-tables.html" class="side-menu__item">Grid JS Tables</a>
             </li>
-            <li class="slide active">
-              <a href="data-tables.html" class="side-menu__item active">Data Tables</a>
+            <li class="slide">
+              <a href="data-tables.html" class="side-menu__item">Data Tables</a>
             </li>
           </ul>
         </li>

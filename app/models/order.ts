@@ -23,7 +23,7 @@ export default class Order extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
 
-  @column.dateTime()
+  @column.dateTime({columnName: "deleted_at"})
   declare deletedAt: DateTime | null
 
   @beforeCreate()

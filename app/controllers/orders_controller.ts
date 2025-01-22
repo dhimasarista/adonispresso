@@ -32,9 +32,18 @@ export default class OrdersController {
     }
 
     async create({request, response}: HttpContext) {
-      return response.status(200).json({
-        data: await this.orderService.createOrder(request.body())
-      })
+      try {
+        return response.status(200).json({
+          data: await this.orderService.createOrder(request.body())
+        })
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(error.stack);
+          return response.status(500).json({
+            message: "internal server error"
+          });
+        }
+      }
     }
 
     async index({response, request}: HttpContext) {

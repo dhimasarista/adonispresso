@@ -17,5 +17,6 @@ router.resource("/users", UsersController)
 
 router.group(() => {
   router.get("", [OrdersController, "render"])
+  router.post("", [OrdersController, "create"])
   router.get("/list", [OrdersController, "index"])
 }).prefix("/orders")

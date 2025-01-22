@@ -3,6 +3,7 @@ import OrderItem from '#models/order_item';
 import Product from '#models/product';
 import { uuidv7 } from 'uuidv7';
 import db from '@adonisjs/lucid/services/db'
+import Formatting from '../utilities/formatting.js';
 export class OrderService {
   public async getOrderStatistics() {
     const orders = await Order.query()
@@ -13,7 +14,14 @@ export class OrderService {
         Order.query().count("*").where("status", "pending").as("pending"),
         Order.query().count("*").where("status", "cancel").as("cancel"),
       )
-    return orders[0].$extras;
+      const statistics = orders[0].$extras;
+    return {
+      total: Formatting.formatNumberWithDots(statistics.total),
+      totalOrder: Formatting.formatNumberWithDots(statistics.total_order),
+      success: Formatting.formatNumberWithDots(statistics.success),
+      pending: Formatting.formatNumberWithDots(statistics.pending),
+      cancel: Formatting.formatNumberWithDots(statistics.cancel),
+    };
   }
   public async getOrderWithItems(offset: number, length: number, search: string) {
     const ordersQuery = Order.query().preload("orderItems", (query) => {

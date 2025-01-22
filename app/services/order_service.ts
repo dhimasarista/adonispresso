@@ -34,7 +34,7 @@ export class OrderService {
       ordersQuery.where('total_amount', 'LIKE', "%$search%")
     }
 
-    const orders = await ordersQuery.orderBy("created_at", "desc")
+    const orders = await ordersQuery.orderBy("created_at", "asc")
       .limit(length)
       .offset(offset)
 

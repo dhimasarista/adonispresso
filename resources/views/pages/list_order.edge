@@ -1,98 +1,38 @@
 @layouts.dashboard({title: "Order List"})
-@slot("styles")
-@component('components/styles', {
-loadBootstrap: true,
-loadStyles: true,
-loadIcons:true,
-loadNodeWaves: true,
-loadSimplebar: true,
-loadColorPicker: true,
-loadChoices: true,
-loadDatetimePicker: true,
-loadAutocomplete: true,
-loadDatatables: true,
-})
-@end
-@endslot
-@slot("main")
-<!-- Page Header -->
-<div class="my-4 page-header-breadcrumb d-flex align-items-center justify-content-between flex-wrap gap-2">
-  <div>
-    <h1 class="page-title fw-medium fs-18 mb-2">Dashboard</h1>
-    <div class="">
-      <nav>
-        <ol class="breadcrumb mb-0">
-          <li class="breadcrumb-item"><a href="javascript:void(0);">Order</a></li>
-          <li class="breadcrumb-item active" aria-current="page">List</li>
-        </ol>
-      </nav>
-    </div>
-  </div>
-  <div class="btn-list">
-    <button class="btn btn-primary-light btn-wave me-2"
-      hx-get="/orders/statistics"
-      hx-target="#order-statistics"
-      hx-trigger="click">
-      <i class="bx bx-crown align-middle"></i> Refresh
-    </button>
-    <button class="btn btn-dark btn-wave me-0" hx-get="/orders/new" hx-push-url="true" hx-target="body">
-      <i class="bi bi-clipboard-plus-fill align-middle"></i> New Product
-    </button>
-  </div>
-</div>
-<!-- Page Header Close -->
-<!-- Start:: row-4 -->
-<div class="row">
-  <div class="col-xl-12">
-    <div id="order-statistics" hx-get="/orders/statistics" hx-trigger="load">
-      {{-- order statistic will render here --}}
-    </div>
-    <div class="card custom-card">
-      <div class="card-header">
-        <div class="card-title">Data Table</div>
-      </div>
-      <div class="card-body">
-        <div class="table-responsive">
-          <table id="datatable-table" class="table table-bordered text-nowrap w-100">
-            <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>Total Amount</th>
-                <th>Products</th>
-                <th>Status</th>
-                <th>Date</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- End:: row-4 -->
+  @slot("styles")
+    @component('components/styles', {
+    loadBootstrap: true,
+    loadStyles: true,
+    loadIcons:true,
+    loadNodeWaves: true,
+    loadSimplebar: true,
+    loadColorPicker: true,
+    loadChoices: true,
+    loadDatetimePicker: true,
+    loadAutocomplete: true,
+    loadDatatables: true,
+    })
+    @end
+  @endslot
 
-@endslot
 
-@slot("scripts")
-@component('components/scripts', {
-loadJquery: true,
-loadPopper: true,
-loadBootstrap: true,
-loadDatatables: true,
-loadNodeWaves: true,
-loadSticky: true,
-loadSimplebar: true,
-loadAutocomplete: true,
-loadColorPicker: true,
-loadDatetimePicker: true,
-loadCustomSwitcher: true,
-loadDefaultMenu: true,
-})
-@end
-@endslot
+  @slot("scripts")
+    @component('components/scripts', {
+    loadJquery: true,
+    loadPopper: true,
+    loadBootstrap: true,
+    loadDatatables: true,
+    loadNodeWaves: true,
+    loadSticky: true,
+    loadSimplebar: true,
+    loadAutocomplete: true,
+    loadColorPicker: true,
+    loadDatetimePicker: true,
+    loadCustomSwitcher: true,
+    loadDefaultMenu: true,
+    })
+    @end
+  @endslot
 @end
 <script>
   // file export datatable

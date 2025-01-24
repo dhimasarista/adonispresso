@@ -3,6 +3,7 @@ import { ProductService } from '#services/product_service';
 import env from '#start/env';
 import { inject } from '@adonisjs/core';
 import type { HttpContext } from '@adonisjs/core/http'
+import logger from '@adonisjs/core/services/logger';
 @inject()
 export default class OrdersController {
     constructor(
@@ -17,7 +18,7 @@ export default class OrdersController {
         return view.render("pages/list_order")
       } catch (err) {
         if (err instanceof Error) {
-          console.error(err.message);
+          logger.error({ err: Error }, err.message);
           if (env.get("NODE_ENV", "development")) {
             return view.render("pages/errors/server_error", { error: err })
           }
@@ -32,7 +33,7 @@ export default class OrdersController {
         orders = await this.orderService.getOrderStatistics()
       } catch (err) {
         if (err instanceof Error) {
-          console.error(err.message);
+          logger.error({ err: Error }, err.message);
           if (env.get("NODE_ENV", "development")) {
             error = {
               message: err.message,

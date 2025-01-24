@@ -25,5 +25,6 @@ router.group(() => {
 }).prefix("/orders")
 
 router.group(() => {
+  router.get("", [ProductsController, "index"])
   router.get("list", [ProductsController, "list"])
 }).prefix("/products")

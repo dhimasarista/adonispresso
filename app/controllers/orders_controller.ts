@@ -80,7 +80,7 @@ export default class OrdersController {
         // jikq list di query param != true
         // redirect ke order/list
         if (!request.qs()["list"]) {
-          return response.redirect("/orders/list")
+          return response.redirect("/orders/new")
         }
 
         return response.status(200).json({

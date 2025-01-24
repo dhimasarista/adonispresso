@@ -1,6 +1,7 @@
 import { UserService } from '#services/user_service';
 import { inject } from '@adonisjs/core';
 import type { HttpContext } from '@adonisjs/core/http'
+import logger from '@adonisjs/core/services/logger';
 
 @inject()
 export default class UsersController {
@@ -45,7 +46,7 @@ export default class UsersController {
             message: "username has been used"
           });
         }
-        console.error(error.message);
+        logger.error({ err: Error }, error.message)
         return response.status(500).json({
           message: "internal server error"
         });
@@ -67,7 +68,7 @@ export default class UsersController {
             message: "username not found"
           });
         }
-        console.error(error)
+        logger.error({ err: Error }, error.message);
         return response.status(500).json({
           message: "internal server error"
         });
@@ -101,7 +102,7 @@ export default class UsersController {
             message: "user not found"
           });
         }
-        console.error(error);
+        logger.error({ err: Error }, error.message);
         return response.status(500).json({
           message: "internal server error"
         });
@@ -125,7 +126,7 @@ export default class UsersController {
             message: "user not found"
           });
         }
-        console.error(error)
+        logger.error({ err: Error }, error.message);
         return response.status(500).json({
           message: "internal server error"
         });

@@ -27,7 +27,7 @@
         <li class="slide__category"><span class="category-name">Dashboards</span></li>
         <!-- End::slide__category -->
         <li class="slide">
-          <a href="#" hx-get="/orders/new" hx-swap="outerHTML"  hx-push-url="true" hx-target="body" class="side-menu__item {{ request.url() == "/orders/new" ? "active": null }}">
+          <a href="/orders/new" class="side-menu__item {{ request.url() == "/orders/new" ? "active": null }}">
             <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 256 256">
               <rect width="256" height="256" fill="none" />
               <polyline points="48 139.59 48 216 208 216 208 139.59" fill="none" stroke="currentColor"
@@ -45,7 +45,8 @@
           </a>
         </li>
         <li class="slide">
-          <a href="#" hx-get="/orders/list" hx-swap="outerHTML"  hx-push-url="true" hx-target="body" class="side-menu__item {{ request.url() == "/orders/list" ? "active": null }}">
+          {{-- <a href="#" hx-get="/orders/list" hx-swap="outerHTML"  hx-push-url="true" hx-target="body" class="side-menu__item"></a> --}}
+          <a href="/orders/list" class="side-menu__item {{ request.url() == "/orders/list" ? "active": null }}">
             <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 256 256">
               <rect width="256" height="256" fill="none" />
               <polyline points="48 139.59 48 216 208 216 208 139.59" fill="none" stroke="currentColor"

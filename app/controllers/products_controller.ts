@@ -3,7 +3,7 @@ import { ProductService } from "#services/product_service";
 import { inject } from "@adonisjs/core";
 import logger from '@adonisjs/core/services/logger'
 import env from '#start/env';
-import { ClientError, errorResponse, ServerError } from '../utilities/error_handling.js';
+import { errorResponse } from '../utilities/error_handling.js';
 
 @inject()
 export default class ProductsController {

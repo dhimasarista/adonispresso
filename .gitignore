@@ -13,6 +13,8 @@ tmp
 public/assets
 public/
 
+storage/
+
 # Build tools specific
 npm-debug.log
 yarn-error.log

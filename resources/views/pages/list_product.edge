@@ -411,7 +411,7 @@ loadSweetAlert: true,
     removeFile(); // Call removeFile when the modal is closed
   });
   function saveNewProduct(id){
-    let image = null;
+    let image = "";
     const formData = new FormData();
     let httpMethod = "POST";
     if (id){
@@ -419,10 +419,11 @@ loadSweetAlert: true,
       httpMethod = "PUT";
     }
     if (uploadImage.getFile()){
-      formData.append("image", uploadImage.getFiles().pop().serverId);
+      image = uploadImage.getFiles().pop().serverId;
     }
     formData.append("name", $("#name-form").val());
     formData.append("price", $("#price-form").val());
+    formData.append("image", image);
     $.ajax({
       url: '/products',  // Ganti dengan URL server endpoint yang sesuai
       type: httpMethod,

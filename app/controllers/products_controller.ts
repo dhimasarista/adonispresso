@@ -54,11 +54,32 @@ export default class ProductsController {
     } catch (error) {
       if (error instanceof Error) {
         logger.error({ err: Error }, error.message)
-        if (error.message === "image missing") {
+        if (error.message === "missing image") {
           return response.status(400).json({
             message: "missing image"
           });
         }
+        return response.status(500).json({
+          message: "internal server error"
+        });
+      }
+    }
+  }
+  public async deleteImage({request, response}: HttpContext){
+    try {
+      const body = request.only(["image"]);
+      const deleteImage = await this.productService.deleteImage(body.image);
+      if (deleteImage) {
+        return response.status(200).json({
+          message: `Image ${body.image} was deleted`
+        })
+      }
+      return response.status(400).json({
+        message: `Image ${body.image} could not be found or deleted`
+      })
+    } catch (error) {
+      if (error instanceof Error) {
+        logger.error({ err: Error }, error.message)
         return response.status(500).json({
           message: "internal server error"
         });

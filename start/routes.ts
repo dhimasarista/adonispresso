@@ -27,6 +27,7 @@ router.group(() => {
 
 router.group(() => {
   router.get("", [ProductsController, "index"])
-  router.post("upload", [ProductsController, "uploadImage"])
+  router.post("image", [ProductsController, "uploadImage"])
+  router.delete("image", [ProductsController, "deleteImage"])
   router.get("list", [ProductsController, "list"])
 }).prefix("/products")

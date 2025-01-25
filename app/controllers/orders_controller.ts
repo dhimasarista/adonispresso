@@ -99,4 +99,20 @@ export default class OrdersController {
         }
       }
     }
+    public async topSelling({response}: HttpContext){
+      try {
+       const products = await this.orderService.topSelling();
+       return response.status(200).json({
+        message: "get top sell product",
+        products
+       })
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(error.message);
+          return response.status(500).json({
+            message: "internal server error"
+          });
+        }
+      }
+    }
 }

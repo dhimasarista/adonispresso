@@ -7,10 +7,25 @@ import { ClientError, ServerError } from '../utilities/error_handling.js';
 import logger from '@adonisjs/core/services/logger';
 import { errors } from '@vinejs/vine';
 import { MultipartFile } from '@adonisjs/core/bodyparser';
+import { errors as lucidErrors } from '@adonisjs/lucid'
 export class ProductService {
   constructor() { }
   public async list() {
     return await Product.query().select("id", "name", "price", "image", "created_at").whereNull("deleted_at");
+  }
+  public async findById(id: string){
+    try {
+      const products = await Product.findOrFail(id);
+      return {
+        "message": `get product ${id}`,
+        "data": products,
+      }
+    } catch (error) {
+      if (error instanceof lucidErrors.E_ROW_NOT_FOUND) {
+        throw new ClientError(`product ${id} not found`, 404);
+      }
+      throw new ServerError("internal server error", 500);
+    }
   }
   public async createProduct(product: object) {
     try {
@@ -75,20 +90,18 @@ export class ProductService {
       const product = await Product.findBy('image', image);
       // Periksa apakah file ada di storage
       const exists = await driveInstance.exists(location);
-      if (!product || !exists) {
+      if (product || exists) {
+        // Update produk (jika ada) untuk menghapus referensi gambar
+        if (product) {
+          await product.merge({ image: null }).save();
+        }
+        // Hapus file di storage (jika ada)
+        if (exists) {
+          await driveInstance.delete(location);
+        }
+      } else {
         throw new ClientError(`${image} not found`, 404);
       }
-
-      // Update produk untuk menghapus referensi gambar (jika ada)
-      if (product) {
-        await product.merge({ image: null }).save();
-      }
-
-      // Hapus file di storage (jika ada)
-      if (exists) {
-        await driveInstance.delete(location);
-      }
-
       return `Image ${image} was deleted`;
     } catch (error) {
       if (error instanceof ClientError) {

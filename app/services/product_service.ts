@@ -11,7 +11,7 @@ import { errors as lucidErrors } from '@adonisjs/lucid'
 export class ProductService {
   constructor() { }
   public async list() {
-    return await Product.query().select("id", "name", "price", "image", "created_at").whereNull("deleted_at");
+    return await Product.query().select("id", "name", "price", "image", "created_at").orderBy("created_at", "desc").whereNull("deleted_at");
   }
   public async findById(id: string){
     try {

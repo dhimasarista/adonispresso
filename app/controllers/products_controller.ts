@@ -36,4 +36,33 @@ export default class ProductsController {
       }
     }
   }
+  async uploadImage({request, response}: HttpContext){
+    try {
+      const image = request.file("image", {
+        size: "5mb",
+        extnames: ['jpeg', 'jpg', 'png'],
+      });
+      if (!image) {
+        throw new Error("missing image");
+      }
+      const uploadImage = await this.productService.uploadImage(image);
+
+      return response.status(200).json({
+        message: "success upload image",
+        image: uploadImage
+      })
+    } catch (error) {
+      if (error instanceof Error) {
+        logger.error({ err: Error }, error.message)
+        if (error.message === "image missing") {
+          return response.status(400).json({
+            message: "missing image"
+          });
+        }
+        return response.status(500).json({
+          message: "internal server error"
+        });
+      }
+    }
+  }
 }

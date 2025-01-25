@@ -112,5 +112,23 @@ export class OrderService {
     })
     return orderId;
   }
+  public async topSelling(){
+    const products = await OrderItem.query()
+    .select(
+      "products.id as product_id", "products.name as product_name",
+    ).count("order_items.product_id", "total_orders")
+    .innerJoin("products", (query) => {
+      query.on("order_items.product_id", "=", "products.id")
+    }).groupBy("products.id", "products.name")
+    .orderBy("total_orders", "asc")
+    .limit(10)
 
+    return products.map((data) => {
+      return {
+        product_id: data.$original.productId,
+        product_name: data.$extras.product_name,
+        total_orders: data.$extras.total_orders,
+      }
+    });
+  }
 }

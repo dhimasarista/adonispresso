@@ -248,8 +248,7 @@ loadDefaultMenu: true,
         data: "name",
         render: function (data, type, row) {
           const defaultImage = "../assets/images/ecommerce/jpg/3.jpg";
-          const image = row.image ?? defaultImage;
-          console.log(image);
+          const image = row.image ? `/storage/products/${row.image}` : defaultImage;
           return `
           <div class="d-flex align-items-center flex-wrap">
               <div class="me-3 lh-1">

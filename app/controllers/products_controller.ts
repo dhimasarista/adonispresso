@@ -8,8 +8,8 @@ import env from '#start/env';
 export default class ProductsController {
   constructor(
     protected productService: ProductService
-  ){}
-  async list({response}: HttpContext){
+  ) { }
+  async list({ response }: HttpContext) {
     try {
       const products = await this.productService.list();
       return response.json({
@@ -24,7 +24,7 @@ export default class ProductsController {
       }
     }
   }
-  async index({view}: HttpContext){
+  async index({ view }: HttpContext) {
     try {
       return view.render("pages/list_product", {})
     } catch (err) {
@@ -36,7 +36,37 @@ export default class ProductsController {
       }
     }
   }
-  async uploadImage({request, response}: HttpContext){
+  /**
+ * @swagger
+ * /upload:
+ *   post:
+ *     summary: Upload an image
+ *     description: Upload an image file (JPEG, JPG, PNG) with a size limit of 5MB.
+ *     consumes:
+ *       - multipart/form-data
+ *     parameters:
+ *       - in: formData
+ *         name: filepond
+ *         type: file
+ *         description: The image file to upload
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: File uploaded successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "File uploaded successfully"
+ *       400:
+ *         description: Invalid file or no file uploaded
+ *       500:
+ *         description: Internal server error
+ */
+  async uploadImage({ request, response }: HttpContext) {
     try {
       const image = request.file("filepond", {
         size: "5mb",
@@ -59,7 +89,7 @@ export default class ProductsController {
       }
     }
   }
-  public async deleteImage({request, response}: HttpContext){
+  public async deleteImage({ request, response }: HttpContext) {
     try {
       const body = request.only(["image"]);
       const deleteImage = await this.productService.deleteImage(body.image);

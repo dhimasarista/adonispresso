@@ -86,7 +86,7 @@ export default class OrdersController {
         })
       } catch (error) {
         if (error instanceof Error) {
-          console.error(error.stack);
+          console.error(error.message);
           return response.status(500).json({
             message: "internal server error"
           });

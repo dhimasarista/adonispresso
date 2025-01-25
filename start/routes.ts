@@ -22,6 +22,7 @@ router.group(() => {
   router.get("list", [OrdersController, "renderListOrder"])
   router.get("new", [OrdersController, "renderNewOrder"])
   router.get("statistics", [OrdersController, "renderOrderStatistics"])
+  router.get("topsell", [OrdersController, "topSelling"])
 }).prefix("/orders")
 
 router.group(() => {

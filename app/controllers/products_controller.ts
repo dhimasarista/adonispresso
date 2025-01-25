@@ -38,19 +38,13 @@ export default class ProductsController {
   }
   async uploadImage({request, response}: HttpContext){
     try {
-      const image = request.file("image", {
+      const image = request.file("filepond", {
         size: "5mb",
         extnames: ['jpeg', 'jpg', 'png'],
       });
-      if (!image) {
-        throw new Error("missing image");
-      }
+      if (!image) throw new Error("missing image");
       const uploadImage = await this.productService.uploadImage(image);
-
-      return response.status(200).json({
-        message: "success upload image",
-        image: uploadImage
-      })
+      return response.status(200).send(uploadImage);
     } catch (error) {
       if (error instanceof Error) {
         logger.error({ err: Error }, error.message)

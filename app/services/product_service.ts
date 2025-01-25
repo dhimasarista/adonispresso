@@ -22,7 +22,7 @@ export class ProductService {
       const product = await Product.findBy("image", image);
       // Periksa apakah file ada di storage
       const exists = await d.exists(location);
-      if (product && exists) {
+      if (product || exists) {
         // Update produk (jika ada) untuk menghapus referensi gambar
         if (product) {
           await product.merge({ image: null }).save();

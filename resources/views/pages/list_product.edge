@@ -210,12 +210,12 @@ loadSweetAlert: true,
       <div class="modal-body">
         <div class="row">
           <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
-            <label for="input-label" class="form-label">Name</label>
-            <input type="text" class="form-control" id="input">
+            <label for="name-label" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name-form">
           </div>
           <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
-            <label for="input-label" class="form-label">Price</label>
-            <input type="text" class="form-control" id="input">
+            <label for="price-label" class="form-label">Price</label>
+            <input type="number" class="form-control number-format" id="price-form">
           </div>
         </div>
         <div class="row pt-2">
@@ -223,13 +223,14 @@ loadSweetAlert: true,
             <label for="file-label" class="form-label">Image</label>
             <input type="file" id="upload-filepond" name="filepond" accept="image/png, image/jpeg, image/gif">
           </div>
+          <div class="form-text text-center">The image must be in GIF, JPG, or PNG format and cannot exceed 5MB in size.</div>
         </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
           Close
         </button>
-        <button type="button" id="payButton" class="btn btn-primary">Save</button>
+        <button type="button" id="payButton" class="btn btn-primary" onclick="saveNewProduct()">Save</button>
       </div>
     </div>
   </div>
@@ -340,8 +341,10 @@ loadSweetAlert: true,
 
   /* multiple upload */
   const queryUpload = document.querySelector('#upload-filepond');
-  const uploadImage = FilePond.create(queryUpload, {
+  const optionsFilePond = {
     allowFileRename: true,
+    acceptedFileTypes: ['image/jpeg', 'image/png', 'image/gif'], // Menerima format jpeg, png, gif
+    maxFileSize: '5MB', // Ukuran maksimal file 5MB
     server: {
       process: {
         url: '/products/image', // API endpoint path
@@ -389,15 +392,16 @@ loadSweetAlert: true,
           });
       },
     }
-  });
+  };
+  const uploadImage = FilePond.create(queryUpload);
+  $("#upload-filepond").click(function(){
+    uploadImage.setOptions(optionsFilePond);
+  })
   function removeFile() {
     const files = uploadImage.getFiles(); // Get all files from FilePond
     if (files.length > 0) {
       // Remove the first file from the list
       uploadImage.removeFiles(files[0]);
-      console.log('File removed');
-    } else {
-      console.log('No files to remove');
     }
   }
   window.addEventListener('beforeunload', (event) => {
@@ -406,4 +410,72 @@ loadSweetAlert: true,
   $('#formProductModal').on('hidden.bs.modal', function () {
     removeFile(); // Call removeFile when the modal is closed
   });
+  function saveNewProduct(id){
+    let image = null;
+    const formData = new FormData();
+    let httpMethod = "POST";
+    if (id){
+      formData.append("id", id);
+      httpMethod = "PUT";
+    }
+    if (uploadImage.getFile()){
+      formData.append("image", uploadImage.getFiles().pop().serverId);
+    }
+    formData.append("name", $("#name-form").val());
+    formData.append("price", $("#price-form").val());
+    $.ajax({
+      url: '/products',  // Ganti dengan URL server endpoint yang sesuai
+      type: httpMethod,
+      data: formData,
+      processData: false,  // Jangan memproses data
+      contentType: false,  // Jangan set Content-Type secara manual
+      success: function(response) {
+        $("#name-form").val(null)
+        $("#price-form").val(null)
+        uploadImage.removeFiles();
+        $("#formProductModal").modal("hide")
+        Swal.fire({
+          title: "Success",
+          text: response.message,
+          timer: 1000,
+          showConfirmButton: false,
+          icon: 'success'
+      });
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        uploadImage.removeFile();
+        Swal.fire({
+            title: "Error",
+            text: errorThrown,
+            timer: 1000,
+            showConfirmButton: false,
+            icon: 'error'
+        });
+      },
+      complete: function(jqXHR, textStatus){}
+    });
+  }
+  function editProductForm(id){
+    uploadImage.server = false;
+    $.ajax({
+      url: '/products',  // Ganti dengan URL server endpoint yang sesuai
+      type: httpMethod,
+      data: formData,
+      processData: false,  // Jangan memproses data
+      contentType: false,  // Jangan set Content-Type secara manual
+      success: function(response) {
+        uploadImage.addFile("storage/products/oljzapuq0r6r56elwz79xqfl.png").then(() =>{})
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        Swal.fire({
+            title: "Error",
+            text: errorThrown,
+            timer: 1000,
+            showConfirmButton: false,
+            icon: 'danger'
+        });
+      },
+      complete: function(jqXHR, textStatus){}
+    });
+  }
 </script>

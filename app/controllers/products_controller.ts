@@ -10,6 +10,14 @@ export default class ProductsController {
   constructor(
     protected productService: ProductService
   ) { }
+  async show({params, response}: HttpContext) {
+    try {
+      const product = await this.productService.findById(params.id)
+      return response.status(200).json(product);
+    } catch (error) {
+      errorResponse(error, response);
+    }
+  }
   async store({response, request}: HttpContext){
     try {
       const data = request.only(["name", "image", "price"])

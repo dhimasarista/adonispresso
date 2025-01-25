@@ -15,7 +15,7 @@ export default class Product extends BaseModel {
   declare price: number
 
   @column()
-  declare image: string
+  declare image: string | null
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

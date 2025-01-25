@@ -48,13 +48,36 @@ export default class OrdersController {
       }
     }
 
-    async renderNewOrder({view, response}: HttpContext){
+    async renderNewOrder({view}: HttpContext){
       const products = await this.productService.list()
       return view.render("pages/new_order", {
         products
       })
     }
-
+    /**
+   * @route POST
+   * @description Create a new order
+   * @param {Object} request.body - The request body
+   * @param {Array} request.body.products - List of products in the order
+   * @param {string} request.body.products.product_id - The ID of the product
+   * @param {number} request.body.products.quantity - The quantity of the product
+   * @returns {object} 201 - The created order object
+   * @returns {object} 400 - Bad request if the input data is invalid
+   *
+   * @example
+   * {
+   *   "products": [
+   *     {
+   *       "product_id": "abc123",
+   *       "quantity": 2
+   *     },
+   *     {
+   *       "product_id": "xyz456",
+   *       "quantity": 1
+   *     }
+   *   ]
+   * }
+   */
     async create({request, response}: HttpContext) {
       try {
         const order = await this.orderService.createOrder(request.body())
@@ -70,7 +93,15 @@ export default class OrdersController {
         }
       }
     }
-
+    /**
+   * @route GET
+   * @description Get orders with pagination and search
+   * @param {number} start - The start index for pagination
+   * @param {number} length - The number of records per page
+   * @param {string} search - The search term to filter orders
+   * @returns {object} 200 - A list of orders with pagination info
+   * @returns {object} 400 - Bad request if the inputs are invalid
+   */
     async index({response, request}: HttpContext) {
       try {
         const page = request.input("start", 0)

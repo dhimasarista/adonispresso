@@ -4,6 +4,7 @@ import env from '#start/env';
 import { inject } from '@adonisjs/core';
 import type { HttpContext } from '@adonisjs/core/http'
 import logger from '@adonisjs/core/services/logger';
+import { errorResponse } from '../utilities/error_handling.js';
 @inject()
 export default class OrdersController {
     constructor(
@@ -85,12 +86,7 @@ export default class OrdersController {
           message: `success create order ${order}`
         })
       } catch (error) {
-        if (error instanceof Error) {
-          console.error(error.message);
-          return response.status(500).json({
-            message: "internal server error"
-          });
-        }
+        errorResponse(error, response);
       }
     }
     /**
@@ -138,12 +134,7 @@ export default class OrdersController {
         products
        })
       } catch (error) {
-        if (error instanceof Error) {
-          console.error(error.message);
-          return response.status(500).json({
-            message: "internal server error"
-          });
-        }
+        errorResponse(error, response);
       }
     }
 }

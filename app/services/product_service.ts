@@ -8,10 +8,39 @@ import logger from '@adonisjs/core/services/logger';
 import { errors } from '@vinejs/vine';
 import { MultipartFile } from '@adonisjs/core/bodyparser';
 import { errors as lucidErrors } from '@adonisjs/lucid'
+import Order from '#models/order';
 export class ProductService {
   constructor() { }
   public async list() {
     return await Product.query().select("id", "name", "price", "image", "created_at").orderBy("created_at", "desc").whereNull("deleted_at");
+  }
+  public async listPaginate(offset: number, length: number, search: string){
+    try {
+      const productQuery = Product.query().select("id", "name", "image", "price", "created_at")
+      .whereNull("deleted_at");
+
+      // mengambil total data di table
+      const total = await Product.query().count("* as total");
+
+      if (search) {
+        productQuery.where("name", "LIKE", `%${search}%`);
+      }
+      const products = await productQuery.orderBy("created_at", "desc")
+      .limit(length)
+      .offset(offset);
+
+      return {
+        recordsTotal: total[0].$extras["total"],
+        recordsFiltered: total[0].$extras["total"],
+        data: products
+      };
+    } catch (error) {
+      if (error instanceof ClientError) {
+        throw error;
+      }
+      logger.error(error.message);
+      throw new ServerError('Internal server error', 500);
+    }
   }
   public async findById(id: string){
     try {

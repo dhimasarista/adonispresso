@@ -258,14 +258,14 @@ loadSweetAlert: true,
 @endslot
 @end
 <script>
-  // file export datatable
-  $('#datatable-table').DataTable({
-    "serverSide": true,
-    "processing": true,
-    "paging": true,
-    "searching": { "regex": true },
-    "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
-    "pageLength": 10,
+  const datatable = $('#datatable-table').DataTable({
+    serverSide: true,
+    // resetPaging: false,
+    processing: true,
+    paging: true,
+    searching: { "regex": true },
+    lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+    pageLength: 10,
     dom: 'Bfrtip',
     buttons: [
       'copy', 'csv', 'excel', 'pdf', 'print'
@@ -277,7 +277,7 @@ loadSweetAlert: true,
     ajax: {
       url: "/products/list",
       type: "GET",
-      dataSrc: "products"
+      dataSrc: "products",
     },
     columns: [
       {
@@ -453,7 +453,9 @@ loadSweetAlert: true,
             icon: 'error'
         });
       },
-      complete: function(jqXHR, textStatus){}
+      complete: function(jqXHR, textStatus){
+        datatable.ajax.reload(null, false);
+      }
     });
   }
   function editProductForm(id){

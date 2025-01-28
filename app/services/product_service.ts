@@ -7,8 +7,7 @@ import { ClientError, ServerError } from '../utilities/error_handling.js';
 import logger from '@adonisjs/core/services/logger';
 import { errors } from '@vinejs/vine';
 import { MultipartFile } from '@adonisjs/core/bodyparser';
-import { errors as lucidErrors } from '@adonisjs/lucid'
-import Order from '#models/order';
+import { errors as lucidErrors } from '@adonisjs/lucid';
 export class ProductService {
   constructor() { }
   public async list() {

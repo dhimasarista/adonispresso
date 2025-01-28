@@ -10,6 +10,23 @@ export default class ProductsController {
   constructor(
     protected productService: ProductService
   ) { }
+  async listPaginate({request, response}: HttpContext){
+    try {
+      const page = request.input("start", 0);
+      const perPage = request.input("length", 10);
+      const search = request.input("search.value", "");
+      const products = await this.productService.listPaginate(page, perPage,search);
+
+      return response.status(200).json({
+        message: 'get products',
+        recordsTotal: products.recordsTotal,
+        recordsFiltered: products.recordsFiltered,
+        products: products.data
+      })
+    } catch (error) {
+      errorResponse(error, response);
+    }
+  }
   async show({params, response}: HttpContext) {
     try {
       const product = await this.productService.findById(params.id)

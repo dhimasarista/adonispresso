@@ -309,8 +309,8 @@ loadSweetAlert: true,
       {
         data: 'createdAt',
         render: function (data, type, row) {
-          const formattedDate = new Date(data).toLocaleString("id-ID");
-          return formattedDate;
+           const formattedDate = new Date(data).toUTCString()
+           return formattedDate;
         }
       },
       {

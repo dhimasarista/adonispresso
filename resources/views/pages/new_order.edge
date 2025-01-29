@@ -56,7 +56,7 @@ loadSweetAlert: true,
                       <span class="badge bg-primary rounded py-1 top-left-badge">24% Off</span>
                       <div class="card-img-top p-2 border-bottom border-block-end-dashed">
                           <div class="img-box-2 bg-primary-transparent">
-                              <img src="https://images.unsplash.com/photo-1652507733698-b0c536a92cd4?q=80&w=1950&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                              <img style="width: 200px; height: 200px; object-fit: cover;" src="{{ product && product.image ? '/storage/products/' + product.image : '/assets/images/media/media-13.jpg' }}"
                                   alt="img" class="scale-img img-fluid w-100 rounded">
                           </div>
                       </div>
@@ -90,7 +90,7 @@ loadSweetAlert: true,
                               <input id="quantity_{{ product.id }}" type="number" name="quantities[]" value="0" min="0"
                                   class="form-control text-center" disabled>
                               <button type="button" class="btn btn-outline-secondary"
-                                  onclick="incrementQuantity('{{ product.id }}', '{{ product.price }}', '{{ product.name }}')">+</button>
+                                  onclick="incrementQuantity('{{ product.id }}', '{{ product.image }}', '{{ product.price }}', '{{ product.name }}')">+</button>
                           </div>
                       </div>
                   </div>
@@ -156,10 +156,10 @@ loadSweetAlert: true,
       modal.hide()
   }
 
-  function incrementQuantity(productId, price, name) {
+  function incrementQuantity(productId, image, price, name) {
       const input = document.getElementById(`quantity_${productId}`);
       input.value = parseInt(input.value) + 1;
-      addToSelectedProducts(productId, price, name);
+      addToSelectedProducts(productId, image, price, name);
   }
 
   function decrementQuantity(productId) {
@@ -170,10 +170,10 @@ loadSweetAlert: true,
       }
   }
 
-  function addToSelectedProducts(productId, price, name) {
+  function addToSelectedProducts(productId, image, price, name) {
       const index = selectedProducts.findIndex(item => item.productId === productId);
       if (index === -1) {
-          selectedProducts.push({ productId, price, name, quantity: 1 });
+          selectedProducts.push({ productId, image, price, name, quantity: 1 });
       } else {
           selectedProducts[index].quantity += 1;
       }
@@ -216,7 +216,7 @@ loadSweetAlert: true,
         listItem.innerHTML = `
             <div class="d-flex align-items-center flex">
                 <span class="avatar avatar-md me-3 bg-secondary-transparent border border-secondary border-opacity-10">
-                    <img src="../assets/images/ecommerce/png/14.png" alt="">
+                    <img src="${item.image !== "null" ? "/storage/products/"+item.image : "/assets/images/ecommerce/png/14.png" }" alt="">
                 </span>
                 <div class="flex-fill">
                     <p class="mb-0 fw-semibold">${item.name}</p>

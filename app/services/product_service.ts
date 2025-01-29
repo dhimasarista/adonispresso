@@ -25,7 +25,7 @@ export class ProductService {
       if (search) {
         productQuery.where("name", "LIKE", `%${search}%`);
       }
-      const products = await productQuery.orderBy("created_at", "desc")
+      const products = await productQuery.orderBy("id", "desc")
       .limit(length)
       .offset(offset);
 

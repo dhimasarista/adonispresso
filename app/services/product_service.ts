@@ -74,6 +74,34 @@ export class ProductService {
       throw new ServerError("internal server error", 500);
     }
   }
+  public async updateProduct(id: string, dataUpdate: object){
+    try {
+      const data = await createProductValidator.validate(dataUpdate)
+      const product = await Product.findOrFail(id)
+      // update data
+      product.name = data.name;
+      product.price = data.price;
+      if (data.image) product.image = data.image;
+      // save it
+      await product.save();
+
+      return {
+        message: `success update product ${id}`,
+      }
+    } catch (error) {
+      if (error instanceof lucidErrors.E_ROW_NOT_FOUND) {
+        throw new ClientError(`product ${id} not found`, 404);
+      }
+      if (error instanceof errors.E_VALIDATION_ERROR) {
+        throw new ClientError(error.message, 400);
+      }
+      if (error.code === 'ER_DUP_ENTRY') {
+        throw new ClientError('duplicate entry for product', 400);
+      }
+      logger.error(error.message)
+      throw new ServerError("internal server error", 500);
+    }
+  }
   public async uploadImage(request: Request): Promise<string> {
     try {
       // Ambil file dari request

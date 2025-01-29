@@ -28,6 +28,7 @@ router.group(() => {
 router.group(() => {
   router.get("", [ProductsController, "index"])
   router.post("", [ProductsController, "store"])
+  router.put("", [ProductsController, "update"])
   router.post("image", [ProductsController, "uploadImage"])
   router.delete("image", [ProductsController, "deleteImage"])
   router.get("list", [ProductsController, "listPaginate"])

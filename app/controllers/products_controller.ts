@@ -44,6 +44,16 @@ export default class ProductsController {
       errorResponse(error, response);
     }
   }
+  async update({response, request}: HttpContext){
+    try {
+      const data = request.only(["name", "image", "price"])
+      const id: string = request.only(["id"])["id"];
+      const updateProduct = await this.productService.updateProduct(id,data);
+      return response.status(200).json(updateProduct);
+    } catch (error) {
+      errorResponse(error, response);
+    }
+  }
   async list({ response }: HttpContext) {
     try {
       const products = await this.productService.list();

@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 import { uuidv7 } from "uuidv7";
-import { BaseModel, beforeCreate, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
+import { BaseModel, beforeCreate, column, hasMany } from '@adonisjs/lucid/orm'
 import type { HasMany } from '@adonisjs/lucid/types/relations';
 import OrderItem from './order_item.js';
 

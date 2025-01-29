@@ -8,6 +8,7 @@ import logger from '@adonisjs/core/services/logger';
 import { errors } from '@vinejs/vine';
 import { MultipartFile } from '@adonisjs/core/bodyparser';
 import { errors as lucidErrors } from '@adonisjs/lucid';
+import { DateTime } from 'luxon';
 export class ProductService {
   constructor() { }
   public async list() {
@@ -76,12 +77,27 @@ export class ProductService {
   }
   public async updateProduct(id: string, dataUpdate: object){
     try {
-      const data = await createProductValidator.validate(dataUpdate)
-      const product = await Product.findOrFail(id)
+      const data = await createProductValidator.validate(dataUpdate);
+      const product = await Product.findOrFail(id);
+
       // update data
       product.name = data.name;
       product.price = data.price;
-      if (data.image) product.image = data.image;
+      product.updatedAt = DateTime.now();
+
+      // if data image not null or not empty
+      if (data.image) {
+        // then product.image (null || not null) !== data.image
+        if (product.image !== data.image) {
+          const location = `/products/${product.image}`;
+          const driveInstance = drive.use('fs');
+          const exists = await driveInstance.exists(location);
+          if (exists) {
+            await driveInstance.delete(location);
+          }
+          product.image = data.image;
+        }
+      }
       // save it
       await product.save();
 

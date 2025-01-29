@@ -230,7 +230,7 @@ loadSweetAlert: true,
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
           Close
         </button>
-        <button type="button" id="payButton" class="btn btn-primary" onclick="saveNewProduct()">Save</button>
+        <button type="button" id="payButton" class="btn btn-primary" onclick="saveProduct()">Save</button>
       </div>
     </div>
   </div>
@@ -314,12 +314,14 @@ loadSweetAlert: true,
         }
       },
       {
-        data: null,
+        data: 'id',
         render: function (data, type, row) {
           return `
                   <div class="hstack gap-2 fs-15">
-                    <a href="javascript:void(0);" class="btn btn-icon btn-sm btn-success-light"><i class="ri-edit-2-fill"></i></a>
-                    <a href="javascript:void(0);" class="btn btn-icon btn-sm btn-danger"><i class="ri-delete-bin-2-fill"></i></a>
+                    <button class="btn btn-icon btn-sm btn-success-light" onclick="editProductForm('${data}')">
+                      <i class="ri-edit-2-fill"></i>
+                    </button>
+                    <button class="btn btn-icon btn-sm btn-danger"><i class="ri-delete-bin-2-fill"></i></button>
                   </div>
                   `;
         }
@@ -408,24 +410,38 @@ loadSweetAlert: true,
     removeFile();
   });
   $('#formProductModal').on('hidden.bs.modal', function () {
+    $("#formProductModal").removeAttr("product-id")
+    $("#name-form").val(null);
+    $("#price-form").val(null);
     removeFile(); // Call removeFile when the modal is closed
   });
-  function saveNewProduct(id){
+  function saveProduct(){
     let image = "";
+    const id = $("#formProductModal").attr("product-id")
     const formData = new FormData();
     let httpMethod = "POST";
+
+    // if id exist it will be updating data
     if (id){
       formData.append("id", id);
       httpMethod = "PUT";
     }
-    if (uploadImage.getFile()){
-      image = uploadImage.getFiles().pop().serverId;
+
+    // this logic use for checking file it will be update or create
+    let file = uploadImage.getFile();  // taking first file
+    if (file) { // if file exists
+      const lastFile = uploadImage.getFiles().pop();  // take the last file
+      // checking the file has serverId, if not using filename
+      image = lastFile.serverId || lastFile.filename;
     }
+
+    // append data to formdata
     formData.append("name", $("#name-form").val());
     formData.append("price", $("#price-form").val());
     formData.append("image", image);
+
     $.ajax({
-      url: '/products',  // Ganti dengan URL server endpoint yang sesuai
+      url: '/products',
       type: httpMethod,
       data: formData,
       processData: false,  // Jangan memproses data
@@ -458,27 +474,32 @@ loadSweetAlert: true,
       }
     });
   }
-  function editProductForm(id){
-    uploadImage.server = false;
+  function editProductForm(productId) {
     $.ajax({
-      url: '/products',  // Ganti dengan URL server endpoint yang sesuai
-      type: httpMethod,
-      data: formData,
-      processData: false,  // Jangan memproses data
-      contentType: false,  // Jangan set Content-Type secara manual
-      success: function(response) {
-        uploadImage.addFile("storage/products/oljzapuq0r6r56elwz79xqfl.png").then(() =>{})
+      url: `/products/${productId}`,
+      type: 'GET',
+      success: function(data) {
+        const product = data["data"];
+        if (product) {
+          $("#formProductModal").attr("product-id", product["id"]);
+          $("#name-form").val(product["name"]);
+          $("#price-form").val(product["price"]);
+          if (product["image"]) {
+            uploadImage.server = false;
+            uploadImage.addFile(`storage/products/${product.image}`).then(() => {});
+          }
+          $("#formProductModal").modal("show");
+        }
       },
       error: function(jqXHR, textStatus, errorThrown) {
         Swal.fire({
-            title: "Error",
-            text: errorThrown,
-            timer: 1000,
-            showConfirmButton: false,
-            icon: 'danger'
+          title: "Error",
+          text: errorThrown,
+          timer: 1000,
+          showConfirmButton: false,
+          icon: 'error'
         });
-      },
-      complete: function(jqXHR, textStatus){}
+      }
     });
   }
 </script>

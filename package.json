@@ -64,6 +64,7 @@
     "luxon": "^3.5.0",
     "mysql2": "^3.12.0",
     "reflect-metadata": "^0.2.2",
+    "socket.io": "^4.8.1",
     "uuidv7": "^1.0.2"
   },
   "hotHook": {

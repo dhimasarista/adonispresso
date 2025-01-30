@@ -3,13 +3,18 @@ import { Server } from 'socket.io'
 import server from '@adonisjs/core/services/server'
 import logger from '@adonisjs/core/services/logger';
 
+let io: Server
+
 app.ready(() => {
-  const io = new Server(server.getNodeServer(), {
+  io = new Server(server.getNodeServer(), {
     cors: {
       origin: '*',
     },
   });
+
   io.on('connection', (socket) => {
     logger.info(`ID ${socket.id} Connected`);
   });
 });
+
+export const getIO = () => io;

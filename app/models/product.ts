@@ -24,7 +24,7 @@ export default class Product extends BaseModel {
   declare updatedAt: DateTime
 
   @column.dateTime()
-  declare deletedat: DateTime
+  declare deletedAt: DateTime
 
   @beforeCreate()
   public static async setId(p: Product){

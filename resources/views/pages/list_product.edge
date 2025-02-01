@@ -321,7 +321,7 @@ loadSweetAlert: true,
                     <button class="btn btn-icon btn-sm btn-success-light" onclick="editProductForm('${data}')">
                       <i class="ri-edit-2-fill"></i>
                     </button>
-                    <button class="btn btn-icon btn-sm btn-danger"><i class="ri-delete-bin-2-fill"></i></button>
+                    <button class="btn btn-icon btn-sm btn-danger" onclick="deleteProduct('${data}')"><i class="ri-delete-bin-2-fill"></i></button>
                   </div>
                   `;
         }
@@ -501,5 +501,43 @@ loadSweetAlert: true,
         });
       }
     });
+  }
+  function deleteProduct(id){
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'This action cannot be undone!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+    }).then((result) => {
+      if (result.isConfirmed){
+        $.ajax({
+          url: `/products?id=${id}`,
+          type: 'DELETE',
+          success: function(data) {
+            Swal.fire({
+              title: "Success",
+              text: data["message"],
+              timer: 1000,
+              showConfirmButton: false,
+              icon: 'success'
+            });
+          },
+          error: function(jqXHR, textStatus, errorThrown) {
+            Swal.fire({
+              title: "Error",
+              text: errorThrown,
+              timer: 1000,
+              showConfirmButton: false,
+              icon: 'error'
+            });
+          },
+          complete: function(jqXHR, textStatus){
+            datatable.ajax.reload(null, false);
+          }
+        });
+      }
+    })
   }
 </script>

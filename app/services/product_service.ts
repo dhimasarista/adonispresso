@@ -183,4 +183,24 @@ export class ProductService {
       throw new ServerError('Failed to delete image', 500);
     }
   }
+
+  async delete(id: string) {
+    try {
+      const product = await Product.findOrFail(id);
+      if (product.image) {
+        await this.deleteImage(product.image);
+      }
+      await product.delete();
+
+      return {
+        message: `product ${id} deleted`
+      }
+    } catch (error) {
+      if (error instanceof lucidErrors.E_ROW_NOT_FOUND) {
+        throw new ClientError(`product ${id} not found`, 404);
+      }
+      logger.error(error.message)
+      throw new ServerError("internal server error", 500);
+    }
+  }
 }

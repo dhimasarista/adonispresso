@@ -31,6 +31,7 @@ router.group(() => {
   router.put("", [ProductsController, "update"])
   router.post("image", [ProductsController, "uploadImage"])
   router.delete("image", [ProductsController, "deleteImage"])
+  router.delete("", [ProductsController, "delete"])
   router.get("list", [ProductsController, "listPaginate"])
   router.get("/:id", [ProductsController, "show"])
 }).prefix("/products")

@@ -130,4 +130,14 @@ export default class ProductsController {
       errorResponse(error, response);
     }
   }
+  public async delete(ctx: HttpContext){
+    try {
+      const id = ctx.request.input("id");
+      const deleteProduct = await this.productService.delete(id);
+
+      return ctx.response.status(200).json(deleteProduct)
+    } catch (error) {
+      errorResponse(error, ctx.response);
+    }
+  }
 }

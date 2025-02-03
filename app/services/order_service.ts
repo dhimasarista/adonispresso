@@ -11,13 +11,13 @@ export class OrderService {
   public async getOrderStatistics() {
     try {
       const orders = await Order.query()
-        .sum("total_amount", "total")
-        .count("id as total_order")
-        .select(
-          Order.query().count("*").where("status", "success").as("success"),
-          Order.query().count("*").where("status", "pending").as("pending"),
-          Order.query().count("*").where("status", "cancel").as("cancel"),
-        )
+      .select(
+        Order.query().count("id").as("total_order"), // Menghitung semua order tanpa filter status
+        Order.query().sum("total_amount").where("status", "success").as("total"), // Sum hanya untuk status success
+        Order.query().count("*").where("status", "success").as("success"), // Count status success
+        Order.query().count("*").where("status", "pending").as("pending"), // Count status pending
+        Order.query().count("*").where("status", "cancel").as("cancel") // Count status cancel
+      );
       const statistics = orders[0].$extras;
       return {
         total: Formatting.formatNumberWithDots(statistics.total ?? 0),
@@ -46,7 +46,7 @@ export class OrderService {
         ordersQuery.where('total_amount', 'LIKE', `%${search}%`);
       }
 
-      const orders = await ordersQuery.orderBy("created_at", "asc")
+      const orders = await ordersQuery.orderBy("created_at", "desc")
         .limit(length)
         .offset(offset);
 
@@ -137,9 +137,14 @@ export class OrderService {
         .sum("order_items.quantity", "total_orders")
         .innerJoin("products", (query) => {
           query.on("order_items.product_id", "=", "products.id")
-        }).groupBy("products.id", "products.name")
+        })
+        .innerJoin("orders", (query) => {
+          query.on("order_items.order_id", "=", "orders.id")
+        })
+        .groupBy("products.id", "products.name")
         .orderBy("total_orders", "desc")
-        .limit(10);
+        .limit(10)
+        .where("orders.status", "success");
 
       return products.map((data) => {
         return {
@@ -153,6 +158,7 @@ export class OrderService {
       if (error instanceof ClientError) {
         throw error;
       }
+      logger.error(error.message);
       throw new ServerError('Internal server error', 500);
     }
   }

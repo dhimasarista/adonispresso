@@ -19,11 +19,11 @@ export class OrderService {
         )
       const statistics = orders[0].$extras;
       return {
-        total: Formatting.formatNumberWithDots(statistics.total),
-        totalOrder: Formatting.formatNumberWithDots(statistics.total_order),
-        success: Formatting.formatNumberWithDots(statistics.success),
-        pending: Formatting.formatNumberWithDots(statistics.pending),
-        cancel: Formatting.formatNumberWithDots(statistics.cancel),
+        total: Formatting.formatNumberWithDots(statistics.total ?? 0),
+        totalOrder: Formatting.formatNumberWithDots(statistics.total_order ?? 0),
+        success: Formatting.formatNumberWithDots(statistics.success ?? 0),
+        pending: Formatting.formatNumberWithDots(statistics.pending ?? 0),
+        cancel: Formatting.formatNumberWithDots(statistics.cancel ?? 0),
       };
     } catch (error) {
       if (error instanceof ClientError) {

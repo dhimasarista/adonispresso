@@ -252,17 +252,18 @@ loadSweetAlert: true,
   // Event listener untuk tombol 'Bayar'
   document.getElementById('payButton').addEventListener('click', async () => {
       $.ajax({
-          url: "/api/order",
+          url: "/orders",
           method: "POST",
           contentType: "application/json",
           data: JSON.stringify({ products: selectedProducts }),
           success: function (result, textStatus, xhr) {
-              checkPayment(result["transaction_token"], result["order_id"])
+              {{-- checkPayment(result["transaction_token"], result["order_id"]) --}}
           },
           error: function (result) {
+            console.log(result)
               Swal.fire({
                   title: 'Error',
-                  text: JSON.stringify(result, null, 2),
+                  text: result["responseJSON"]["message"],
                   icon: 'error'
               });
           },

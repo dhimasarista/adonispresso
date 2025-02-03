@@ -126,15 +126,19 @@ export default class OrdersController {
         }
       }
     }
-    public async topSelling({response}: HttpContext){
+    public async topSelling(ctx: HttpContext){
       try {
        const products = await this.orderService.topSelling();
-       return response.status(200).json({
-        message: "get top sell product",
+       return ctx.view.render("components/top_selling", {
         products
        })
-      } catch (error) {
-        errorResponse(error, response);
+      } catch (err) {
+        if (err instanceof Error) {
+          logger.error({ err: Error }, err.message);
+          if (env.get("NODE_ENV", "development")) {
+            return ctx.view.render("pages/errors/server_error", { error: err })
+          }
+        }
       }
     }
 }

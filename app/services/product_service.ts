@@ -9,6 +9,7 @@ import { errors } from '@vinejs/vine';
 import { MultipartFile } from '@adonisjs/core/bodyparser';
 import { errors as lucidErrors } from '@adonisjs/lucid';
 import { DateTime } from 'luxon';
+import app from '@adonisjs/core/services/app'
 export class ProductService {
   constructor() { }
   public async list() {
@@ -141,7 +142,9 @@ export class ProductService {
       const key = `products/${imageName}`;
 
       // Pindahkan file ke storage
-      await image.moveToDisk(key);
+      await image.move(app.makePath('storage'), {
+        name: key
+      });
       return imageName;
     } catch (error) {
       // Tangani error dari sisi client

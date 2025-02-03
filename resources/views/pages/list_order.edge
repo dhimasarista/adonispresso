@@ -126,7 +126,7 @@ loadDefaultMenu: true,
       {
         data: 'totalAmount',
         render: function (data, type, row) {
-          return `IDR ${data}`;
+          return `IDR ${formatNumberWithDots(data)}`;
         }
       },
       {

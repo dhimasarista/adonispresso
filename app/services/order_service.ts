@@ -5,6 +5,7 @@ import { uuidv7 } from 'uuidv7';
 import db from '@adonisjs/lucid/services/db'
 import Formatting from '../utilities/formatting.js';
 import { ClientError, ServerError } from '../utilities/error_handling.js';
+import logger from '@adonisjs/core/services/logger';
 
 export class OrderService {
   public async getOrderStatistics() {
@@ -78,7 +79,7 @@ export class OrderService {
         if (!order.$isPersisted) throw new Error("failed to create order");
         orderId = order.$attributes.id;
 
-        const productIds = data["products"].map((value: any) => value["product_id"]);
+        const productIds = data["products"].map((value: any) => value["productId"]);
         const products = await Product.query()
           .whereIn("id", productIds)
           .exec();
@@ -88,11 +89,11 @@ export class OrderService {
         const orderItems: any = [];
         data["products"].forEach((product: any) => {
           const productExist = productArray.find((p: any) => {
-            return p.id === product["product_id"]
+            return p.id === product["productId"]
           });
 
           if (!productExist) {
-            throw new ClientError(`Product with ID ${product["product_id"]} not found`, 400);
+            throw new ClientError(`Product with ID ${product["productId"]} not found`, 400);
           }
 
           const amount = product["quantity"] * productExist.price;
@@ -119,6 +120,7 @@ export class OrderService {
       if (error instanceof ClientError) {
         throw error;
       }
+      logger.error(error.message);
       throw new ServerError('Internal server error', 500);
     }
   }

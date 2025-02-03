@@ -1,0 +1,35 @@
+<div class="card custom-card">
+  <div class="card-header">
+    <div class="card-title">
+      Products
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="ribbon ribbon-primary ribbon-top-right"><span>Top Sales</span></div>
+    <ul class="list-unstyled ecommerce-top-selling-list">
+      @if(products.length)
+      <li>
+        <div class="d-flex align-items-center flex-wrap">
+          <div class="me-3 lh-1">
+            <span class="avatar avatar-md">
+              <img src="../assets/images/ecommerce/jpg/2.jpg" alt="">
+            </span>
+          </div>
+          <div class=" flex-fill">
+            <span class="d-block mb-0 fw-semibold">Noice Headphones</span>
+            <span class="text-muted fs-13">Electronics</span>
+          </div>
+          <div class="text-end">
+            <span class="mb-0 d-block h6 fw-semibold">$49</span>
+            <span class="mb-0 d-block text-muted fs-13">15,064 Sales</span>
+          </div>
+        </div>
+      </li>
+      @else
+      <li class="d-flex justify-content-center">
+        <h5>No Orders Yet</h5>
+      </li>
+      @end
+    </ul>
+  </div>
+</div>

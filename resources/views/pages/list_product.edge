@@ -43,6 +43,8 @@ loadSweetAlert: true,
 <!-- Page Header Close -->
 <!-- Start:: row-4 -->
 <div class="row">
+  <div class="col-xxl-3" hx-get="/orders/topsell" hx-trigger="load">
+  </div>
   <div class="col-xl-9">
     <div class="card custom-card">
       <div class="card-header">
@@ -65,8 +67,6 @@ loadSweetAlert: true,
         </div>
       </div>
     </div>
-  </div>
-  <div class="col-xxl-3" hx-get="/orders/topsell" hx-trigger="load">
   </div>
 </div>
 <!-- End:: row-4 -->

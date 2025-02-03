@@ -134,7 +134,6 @@ export default class OrdersController {
        })
       } catch (err) {
         if (err instanceof Error) {
-          logger.error({ err: Error }, err.message);
           if (env.get("NODE_ENV", "development")) {
             return ctx.view.render("pages/errors/server_error", { error: err })
           }

@@ -4,19 +4,22 @@ import { inject } from "@adonisjs/core";
 import logger from '@adonisjs/core/services/logger'
 import env from '#start/env';
 import { errorResponse } from '../utilities/error_handling.js';
-
+import { Server } from 'socket.io';
+import { io } from "#start/ws";
 @inject()
 export default class ProductsController {
+  private io: Server;
   constructor(
     protected productService: ProductService
-  ) { }
+  ) {
+    this.io = io;
+  }
   async listPaginate({request, response}: HttpContext){
     try {
       const page = request.input("start", 0);
       const perPage = request.input("length", 10);
       const search = request.input("search.value", "");
       const products = await this.productService.listPaginate(page, perPage,search);
-
       return response.status(200).json({
         message: 'get products',
         recordsTotal: products.recordsTotal,
@@ -39,6 +42,8 @@ export default class ProductsController {
     try {
       const data = request.only(["name", "image", "price"])
       const createProduct = await this.productService.createProduct(data)
+
+      this.io.emit("update_product_table", true);
       return response.status(200).json(createProduct)
     } catch (error) {
       errorResponse(error, response);
@@ -49,6 +54,8 @@ export default class ProductsController {
       const data = request.only(["name", "image", "price"])
       const id: string = request.only(["id"])["id"];
       const updateProduct = await this.productService.updateProduct(id,data);
+
+      this.io.emit("update_product_table", true);
       return response.status(200).json(updateProduct);
     } catch (error) {
       errorResponse(error, response);
@@ -135,6 +142,7 @@ export default class ProductsController {
       const id = ctx.request.input("id");
       const deleteProduct = await this.productService.delete(id);
 
+      this.io.emit("update_product_table", true);
       return ctx.response.status(200).json(deleteProduct)
     } catch (error) {
       errorResponse(error, ctx.response);

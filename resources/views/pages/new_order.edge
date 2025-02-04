@@ -140,6 +140,7 @@ loadDatetimePicker: true,
 loadCustomSwitcher: true,
 loadDefaultMenu: true,
 loadSweetAlert: true,
+loadMidtransClient: true,
 })
 @end
 @endslot
@@ -257,7 +258,7 @@ loadSweetAlert: true,
           contentType: "application/json",
           data: JSON.stringify({ products: selectedProducts }),
           success: function (result, textStatus, xhr) {
-              {{-- checkPayment(result["transaction_token"], result["order_id"]) --}}
+              checkPayment(result["transactionToken"], result["orderId"])
           },
           error: function (result) {
             console.log(result)

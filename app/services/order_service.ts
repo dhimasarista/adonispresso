@@ -8,7 +8,7 @@ import { ClientError, ServerError } from '../utilities/error_handling.js';
 import logger from '@adonisjs/core/services/logger';
 import { MidtransService } from './midtrans_service.js';
 import { inject } from '@adonisjs/core'
-
+import { errors as lucidErrors } from '@adonisjs/lucid';
 @inject()
 export class OrderService {
   constructor(public midtrans: MidtransService) { }
@@ -48,7 +48,7 @@ export class OrderService {
       });
 
       if (search) {
-        ordersQuery.where('total_amount', 'LIKE', `%${search}%`);
+        ordersQuery.where('status', 'LIKE', `%${search}%`);
       }
 
       const orders = await ordersQuery.orderBy("created_at", "desc")
@@ -150,6 +150,29 @@ export class OrderService {
 
       return { orderId, transactionToken };
     } catch (error) {
+      if (error instanceof ClientError) {
+        throw error;
+      }
+      logger.error(error.message);
+      throw new ServerError('Internal server error', 500);
+    }
+  }
+
+  public async checkStatus(orderId: string) {
+    try {
+      const status = await this.midtrans.checkStatus(orderId);
+      if (!status) {
+        throw new ClientError("nothing response from midtrans", 401);
+      }
+      const order = await Order.findOrFail(orderId);
+      order.status = status;
+      order.save();
+
+      return status;
+    } catch (error) {
+      if (error instanceof lucidErrors.E_ROW_NOT_FOUND) {
+        throw new ClientError(`order ${orderId} not found`, 404);
+      }
       if (error instanceof ClientError) {
         throw error;
       }

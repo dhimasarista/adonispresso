@@ -42,4 +42,9 @@
   @include('partials/scroll_top')
   {{{ await $slots.scripts() }}}
 </body>
+    <script>
+      socket.on("connection", () => {
+          socket.emit("message", "Hello from client!");
+      });
+  </script>
 </html>

@@ -61,6 +61,37 @@
 <script src="../assets/js/sweet-alerts.js"></script>
 @endif
 
+@if (loadMidtransClient)
+<script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js"
+    data-client-key="SB-Mid-client-pZ40T3iL913MGQy1"></script>
+<script>
+    function checkPayment(token, orderId) {
+        snap.pay(token, {
+            onSuccess: function (result) {
+                Swal.fire({
+                    title: 'Success',
+                    text: "Pesanan Berhasil Dibayar",
+                    timer: 1000,
+                    showConfirmButton: false,
+                    icon: 'success'
+                }).then((result) => {
+                    $.ajax({
+                        url: `/api/order/check-status?id=${orderId}`,
+                        type: "GET",  // Metode request
+                        success: function (response) { },
+                        error: function (xhr, status, error) { }
+                    });
+                })
+            },
+            onPending: function (result) {
+            },
+            onError: function (result) { },
+            onClose: function () { }
+        });
+    }
+</script>
+@endif
+
 @if (loadFilePond)
 <script src="../assets/libs/filepond/filepond.min.js"></script>
 <script src="../assets/libs/filepond-plugin-image-preview/filepond-plugin-image-preview.min.js"></script>

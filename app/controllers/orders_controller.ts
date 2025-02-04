@@ -119,6 +119,14 @@ export default class OrdersController {
         errorResponse(error, response);
       }
     }
+    public async checkOrderstatus(ctx: HttpContext){
+      try {
+        const checkStatus = await this.orderService.checkStatus(ctx.request.input("id"))
+        return ctx.response.status(200).send(checkStatus);
+      } catch (error) {
+        errorResponse(error, ctx.response);
+      }
+    }
     public async topSelling(ctx: HttpContext){
       try {
        const products = await this.orderService.topSelling();

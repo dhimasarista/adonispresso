@@ -3,7 +3,7 @@ import { Server } from 'socket.io'
 import server from '@adonisjs/core/services/server'
 import logger from '@adonisjs/core/services/logger';
 
-let io: Server
+export let io: Server
 
 app.ready(() => {
   io = new Server(server.getNodeServer(), {

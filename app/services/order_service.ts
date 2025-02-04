@@ -6,19 +6,23 @@ import db from '@adonisjs/lucid/services/db'
 import Formatting from '../utilities/formatting.js';
 import { ClientError, ServerError } from '../utilities/error_handling.js';
 import logger from '@adonisjs/core/services/logger';
+import { MidtransService } from './midtrans_service.js';
+import { inject } from '@adonisjs/core'
 
+@inject()
 export class OrderService {
+  constructor(public midtrans: MidtransService) { }
   public async getOrderStatistics() {
     try {
       const orders = await Order.query()
-      .select(
-        Order.query().count("id").as("total_order"), // Menghitung semua order tanpa filter status
-        Order.query().sum("total_amount").where("status", "success").as("total"), // Sum hanya untuk status success
-        Order.query().count("*").where("status", "success").as("success"), // Count status success
-        Order.query().count("*").where("status", "pending").as("pending"), // Count status pending
-        Order.query().count("*").where("status", "cancel").as("cancel") // Count status cancel
-      );
-      const statistics = orders[0].$extras;
+        .select(
+          Order.query().count("id").as("total_order"), // Menghitung semua order tanpa filter status
+          Order.query().sum("total_amount").where("status", "success").as("total"), // Sum hanya untuk status success
+          Order.query().count("*").where("status", "success").as("success"), // Count status success
+          Order.query().count("*").where("status", "pending").as("pending"), // Count status pending
+          Order.query().count("*").where("status", "cancel").as("cancel") // Count status cancel
+        );
+      const statistics = orders[0].$extras ?? 0;
       return {
         total: Formatting.formatNumberWithDots(statistics.total ?? 0),
         totalOrder: Formatting.formatNumberWithDots(statistics.total_order ?? 0),
@@ -30,6 +34,7 @@ export class OrderService {
       if (error instanceof ClientError) {
         throw error;
       }
+      logger.error(error)
       throw new ServerError('Internal server error', 500);
     }
   }
@@ -67,25 +72,29 @@ export class OrderService {
   public async createOrder(data: any) {
     try {
       let totalAmount = 0;
-      let orderId = 0;
+      let orderId = null;
+      let transactionToken = null;
 
+      // start db transaction
       await db.transaction(async trx => {
+        // create order first
         const order = await Order.create({
           status: "pending",
           totalAmount: 0,
           transactionToken: "",
         }, { client: trx });
 
-        if (!order.$isPersisted) throw new Error("failed to create order");
+        // then assign orderId after create order
         orderId = order.$attributes.id;
-
+        // extract product IDs from the provided data from user request
         const productIds = data["products"].map((value: any) => value["productId"]);
+        // query the database to retrieve product details based on the extracted product IDs
         const products = await Product.query()
           .whereIn("id", productIds)
           .exec();
-
+        // convert product to arrray
         const productArray = products.map((product) => product.toJSON());
-
+        // init order item for tampung data
         const orderItems: any = [];
         data["products"].forEach((product: any) => {
           const productExist = productArray.find((p: any) => {
@@ -107,15 +116,39 @@ export class OrderService {
           });
         });
 
-        await OrderItem.createMany(orderItems, { client: trx });
-
-        order.totalAmount = totalAmount;
-        await order.save();
-
-        await trx.commit();
+        const creatOrderItem = await OrderItem.createMany(orderItems, { client: trx });
+        if (creatOrderItem.length !== 0) {
+          const createTransaction = await this.midtrans.createTransaction(
+            orderId, totalAmount,
+            orderItems.map((item: any) => {
+              productArray.map(product => {
+                if (product.id === item.product_id) {
+                  return {
+                    "id": product.id,
+                    "price": product.price,
+                    "quantity": item.quantity,
+                    "name": product.name,
+                    "brand": "codedhims",
+                    // "category": "Fruit",
+                    // "merchant_name": "Fruit-store",
+                    // "tenor": "12",
+                    // "code_plan": "000",
+                    // "mid": "123456",
+                    // "url": "https://tokobuah.com/apple-fuji"
+                  }
+                }
+              })
+            })
+          )
+          transactionToken = createTransaction.token;
+          order.totalAmount = totalAmount;
+          order.transactionToken = transactionToken;
+          await order.save();
+          await trx.commit();
+        }
       });
 
-      return orderId;
+      return { orderId, transactionToken };
     } catch (error) {
       if (error instanceof ClientError) {
         throw error;

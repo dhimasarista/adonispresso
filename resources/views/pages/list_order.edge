@@ -11,6 +11,7 @@ loadChoices: true,
 loadDatetimePicker: true,
 loadAutocomplete: true,
 loadDatatables: true,
+loadSweetAlert: true,
 })
 @end
 @endslot
@@ -29,7 +30,7 @@ loadDatatables: true,
     </div>
   </div>
   <div class="btn-list">
-    <button class="btn btn-secondary btn-wave me-2"
+    <button id="order-statistic-button" class="btn btn-secondary btn-wave me-2"
       hx-get="/orders/statistics"
       hx-target="#order-statistics"
       hx-trigger="click">
@@ -92,13 +93,14 @@ loadCustomSwitcher: true,
 loadDefaultMenu: true,
 loadMidtransClient: true,
 loadSocketIO: true,
+loadSweetAlert: true,
 })
 @end
 @endslot
 @end
 <script>
   // file export datatable
-  $('#datatable-table').DataTable({
+  const datatable = $('#datatable-table').DataTable({
     "serverSide": true,
     "processing": true,
     "paging": true,
@@ -172,16 +174,33 @@ loadSocketIO: true,
       {
         data: null,
         render: function (data, type, row) {
-          console.log(row)
           return `
                   <div class="hstack gap-2 fs-15">
                     <a href="javascript:void(0);" class="btn btn-icon btn-sm btn-success-light" onclick="checkPayment('${row.transactionToken}', '${row.id}')"><i class="ri-eye-line"></i></a>
-                    <a href="javascript:void(0);" class="btn btn-icon btn-sm btn-info-light product-btn"><i class="ri-verified-badge-line"></i></a>
+                    <a href="javascript:void(0);" class="btn btn-icon btn-sm btn-info-light product-btn" onclick="checkOrderStatus('${row.id}')"><i class="ri-verified-badge-line"></i></a>
                   </div>
                   `;
         }
       },
     ]
   });
-  // file export datatable
+  function checkOrderStatus(orderId) {
+    $.ajax({
+      url: `/orders/status?id=${orderId}`,  // URL untuk mendapatkan data
+      type: "GET",  // Metode request
+      success: function (response) {
+        datatable.ajax.reload(null, false);
+        htmx.trigger(document.getElementById("order-statistic-button"), "click");
+      },
+      error: function (xhr, status, error) {
+        Swal.fire({
+          title: "Error",
+          text: errorThrown,
+          timer: 1000,
+          showConfirmButton: false,
+          icon: 'error'
+        });
+      }
+    });
+  }
 </script>

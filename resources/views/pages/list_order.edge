@@ -90,7 +90,8 @@ loadColorPicker: true,
 loadDatetimePicker: true,
 loadCustomSwitcher: true,
 loadDefaultMenu: true,
-loadMidtransClient: true
+loadMidtransClient: true,
+loadSocketIO: true,
 })
 @end
 @endslot
@@ -164,8 +165,8 @@ loadMidtransClient: true
       {
         data: 'createdAt',
         render: function (data, type, row) {
-          const formattedDate = new Date(data).toLocaleString("id-ID");
-          return formattedDate;
+          const formattedDate = new Date(data).toUTCString()
+           return formattedDate;
         }
       },
       {

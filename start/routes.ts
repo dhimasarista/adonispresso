@@ -21,6 +21,7 @@ router.group(() => {
   router.post("", [OrdersController, "create"])
   router.get("list", [OrdersController, "renderListOrder"])
   router.get("new", [OrdersController, "renderNewOrder"])
+  router.get("status", [OrdersController, "checkOrderstatus"])
   router.get("statistics", [OrdersController, "renderOrderStatistics"])
   router.get("topsell", [OrdersController, "topSelling"])
 }).prefix("/orders")

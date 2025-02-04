@@ -79,12 +79,10 @@ export default class OrdersController {
    *   ]
    * }
    */
-    async create({request, response}: HttpContext) {
+    async create({request, response}: HttpContext): Promise<void> {
       try {
-        const order = await this.orderService.createOrder(request.body())
-        return response.status(200).json({
-          message: `success create order ${order}`
-        })
+        const order = await this.orderService.createOrder(request.body());
+        return response.status(200).json(order);
       } catch (error) {
         errorResponse(error, response);
       }
@@ -118,12 +116,7 @@ export default class OrdersController {
           orders: orders.data
         });
       } catch (error) {
-        if (error instanceof Error) {
-          console.error(error.message);
-          return response.status(500).json({
-            message: "internal server error"
-          });
-        }
+        errorResponse(error, response);
       }
     }
     public async topSelling(ctx: HttpContext){

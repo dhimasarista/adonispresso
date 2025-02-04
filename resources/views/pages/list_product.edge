@@ -93,7 +93,8 @@ loadSweetAlert: true,
             <label for="file-label" class="form-label">Image</label>
             <input type="file" id="upload-filepond" name="filepond" accept="image/png, image/jpeg, image/gif">
           </div>
-          <div class="form-text text-center">The image must be in GIF, JPG, or PNG format and cannot exceed 5MB in size.</div>
+          <div class="form-text text-center">The image must be in GIF, JPG, or PNG format and cannot exceed 5MB in size.
+          </div>
         </div>
       </div>
       <div class="modal-footer">
@@ -180,8 +181,8 @@ loadSocketIO: true,
       {
         data: 'createdAt',
         render: function (data, type, row) {
-           const formattedDate = new Date(data).toUTCString()
-           return formattedDate;
+          const formattedDate = new Date(data).toUTCString()
+          return formattedDate;
         }
       },
       {
@@ -267,7 +268,7 @@ loadSocketIO: true,
     }
   };
   const uploadImage = FilePond.create(queryUpload);
-  $("#upload-filepond").click(function(){
+  $("#upload-filepond").click(function () {
     uploadImage.setOptions(optionsFilePond);
   })
   function removeFile() {
@@ -286,14 +287,14 @@ loadSocketIO: true,
     $("#price-form").val(null);
     removeFile(); // Call removeFile when the modal is closed
   });
-  function saveProduct(){
+  function saveProduct() {
     let image = "";
     const id = $("#formProductModal").attr("product-id")
     const formData = new FormData();
     let httpMethod = "POST";
 
     // if id exist it will be updating data
-    if (id){
+    if (id) {
       formData.append("id", id);
       httpMethod = "PUT";
     }
@@ -317,7 +318,7 @@ loadSocketIO: true,
       data: formData,
       processData: false,  // Jangan memproses data
       contentType: false,  // Jangan set Content-Type secara manual
-      success: function(response) {
+      success: function (response) {
         $("#name-form").val(null)
         $("#price-form").val(null)
         uploadImage.removeFiles();
@@ -328,19 +329,19 @@ loadSocketIO: true,
           timer: 1000,
           showConfirmButton: false,
           icon: 'success'
-      });
-      },
-      error: function(jqXHR, textStatus, errorThrown) {
-        uploadImage.removeFile();
-        Swal.fire({
-            title: "Error",
-            text: errorThrown,
-            timer: 1000,
-            showConfirmButton: false,
-            icon: 'error'
         });
       },
-      complete: function(jqXHR, textStatus){
+      error: function (jqXHR, textStatus, errorThrown) {
+        uploadImage.removeFile();
+        Swal.fire({
+          title: "Error",
+          text: errorThrown,
+          timer: 1000,
+          showConfirmButton: false,
+          icon: 'error'
+        });
+      },
+      complete: function (jqXHR, textStatus) {
         datatable.ajax.reload(null, false);
       }
     });
@@ -349,7 +350,7 @@ loadSocketIO: true,
     $.ajax({
       url: `/products/${productId}`,
       type: 'GET',
-      success: function(data) {
+      success: function (data) {
         const product = data["data"];
         if (product) {
           $("#formProductModal").attr("product-id", product["id"]);
@@ -357,12 +358,12 @@ loadSocketIO: true,
           $("#price-form").val(product["price"]);
           if (product["image"]) {
             uploadImage.server = false;
-            uploadImage.addFile(`storage/products/${product.image}`).then(() => {});
+            uploadImage.addFile(`storage/products/${product.image}`).then(() => { });
           }
           $("#formProductModal").modal("show");
         }
       },
-      error: function(jqXHR, textStatus, errorThrown) {
+      error: function (jqXHR, textStatus, errorThrown) {
         Swal.fire({
           title: "Error",
           text: errorThrown,
@@ -373,7 +374,7 @@ loadSocketIO: true,
       }
     });
   }
-  function deleteProduct(id){
+  function deleteProduct(id) {
     Swal.fire({
       title: 'Are you sure?',
       text: 'This action cannot be undone!',
@@ -382,11 +383,11 @@ loadSocketIO: true,
       confirmButtonText: 'Yes, delete it!',
       cancelButtonText: 'Cancel',
     }).then((result) => {
-      if (result.isConfirmed){
+      if (result.isConfirmed) {
         $.ajax({
           url: `/products?id=${id}`,
           type: 'DELETE',
-          success: function(data) {
+          success: function (data) {
             Swal.fire({
               title: "Success",
               text: data["message"],
@@ -395,7 +396,7 @@ loadSocketIO: true,
               icon: 'success'
             });
           },
-          error: function(jqXHR, textStatus, errorThrown) {
+          error: function (jqXHR, textStatus, errorThrown) {
             Swal.fire({
               title: "Error",
               text: errorThrown,
@@ -404,7 +405,7 @@ loadSocketIO: true,
               icon: 'error'
             });
           },
-          complete: function(jqXHR, textStatus){
+          complete: function (jqXHR, textStatus) {
             datatable.ajax.reload(null, false);
           }
         });

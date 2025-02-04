@@ -90,6 +90,7 @@ loadColorPicker: true,
 loadDatetimePicker: true,
 loadCustomSwitcher: true,
 loadDefaultMenu: true,
+loadMidtransClient: true
 })
 @end
 @endslot
@@ -168,11 +169,12 @@ loadDefaultMenu: true,
         }
       },
       {
-        data: "transactionToken",
+        data: null,
         render: function (data, type, row) {
+          console.log(row)
           return `
                   <div class="hstack gap-2 fs-15">
-                    <a href="javascript:void(0);" class="btn btn-icon btn-sm btn-success-light"><i class="ri-eye-line"></i></a>
+                    <a href="javascript:void(0);" class="btn btn-icon btn-sm btn-success-light" onclick="checkPayment('${row.transactionToken}', '${row.id}')"><i class="ri-eye-line"></i></a>
                     <a href="javascript:void(0);" class="btn btn-icon btn-sm btn-info-light product-btn"><i class="ri-verified-badge-line"></i></a>
                   </div>
                   `;

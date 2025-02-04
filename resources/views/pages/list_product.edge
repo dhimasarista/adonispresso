@@ -123,6 +123,7 @@ loadCustomSwitcher: true,
 loadDefaultMenu: true,
 loadFilePond: true,
 loadSweetAlert: true,
+loadSocketIO: true,
 })
 @end
 @endslot
@@ -410,4 +411,9 @@ loadSweetAlert: true,
       }
     })
   }
+</script>
+<script>
+  socket.on("update_product_table", () => {
+    datatable.ajax.reload(null, false);
+  });
 </script>

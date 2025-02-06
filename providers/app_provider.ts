@@ -7,7 +7,7 @@ export default class AppProvider {
    * Register bindings to the container
    */
   register() {
-    this.app.container.bind(MidtransService, () => {
+    this.app.container.singleton(MidtransService, () => {
       return new MidtransService();
     })
   }

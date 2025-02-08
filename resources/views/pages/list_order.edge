@@ -191,6 +191,7 @@ loadSweetAlert: true,
       success: function (response) {
         datatable.ajax.reload(null, false);
         htmx.trigger(document.getElementById("order-statistic-button"), "click");
+        socket.emit("new_order", "client");
       },
       error: function (xhr, status, error) {
         Swal.fire({
@@ -203,4 +204,10 @@ loadSweetAlert: true,
       }
     });
   }
+</script>
+<script>
+  socket.on("new_order", () => {
+    datatable.ajax.reload(null, false);
+    htmx.trigger(document.getElementById("order-statistic-button"), "click");
+  });
 </script>

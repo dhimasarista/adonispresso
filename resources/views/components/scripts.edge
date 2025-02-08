@@ -76,10 +76,13 @@
                     icon: 'success'
                 }).then((result) => {
                     $.ajax({
-                        url: `/api/order/check-status?id=${orderId}`,
+                        url: `/orders/status?id=${orderId}`,
                         type: "GET",  // Metode request
                         success: function (response) { },
-                        error: function (xhr, status, error) { }
+                        error: function (xhr, status, error) { },
+                        complete: function(jqXHR,textStatus){
+                          socket.emit("new_order", "client");
+                        }
                     });
                 })
             },

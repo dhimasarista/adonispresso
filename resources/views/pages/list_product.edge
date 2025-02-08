@@ -66,7 +66,11 @@ loadSweetAlert: true,
       </div>
     </div>
   </div>
-  <div class="col-xxl-3" hx-get="/orders/topsell" hx-trigger="load">
+  <div
+    class="col-xxl-3"
+    id="top-selling-container"
+    hx-get="/orders/topsell"
+    hx-trigger="load">
   </div>
 </div>
 <!-- End:: row-4 -->
@@ -341,9 +345,7 @@ loadSocketIO: true,
           icon: 'error'
         });
       },
-      complete: function (jqXHR, textStatus) {
-        datatable.ajax.reload(null, false);
-      }
+      complete: function (jqXHR, textStatus) {}
     });
   }
   function editProductForm(productId) {
@@ -405,9 +407,7 @@ loadSocketIO: true,
               icon: 'error'
             });
           },
-          complete: function (jqXHR, textStatus) {
-            datatable.ajax.reload(null, false);
-          }
+          complete: function (jqXHR, textStatus) {}
         });
       }
     })
@@ -416,5 +416,8 @@ loadSocketIO: true,
 <script>
   socket.on("update_product_table", () => {
     datatable.ajax.reload(null, false);
+  });
+  socket.on("new_order", () => {
+    htmx.trigger("#top-selling-container", "load");
   });
 </script>

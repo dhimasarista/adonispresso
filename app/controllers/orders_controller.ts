@@ -5,12 +5,17 @@ import { inject } from '@adonisjs/core';
 import type { HttpContext } from '@adonisjs/core/http'
 import logger from '@adonisjs/core/services/logger';
 import { errorResponse } from '../utilities/error_handling.js';
+import { Server } from 'socket.io';
+import { io } from "#start/ws";
 @inject()
 export default class OrdersController {
+    private io: Server;
     constructor(
       protected orderService: OrderService,
       protected productService: ProductService
-    ){}
+    ){
+      this.io = io;
+    }
     /**
      * Display a list of resource
      */
@@ -31,7 +36,7 @@ export default class OrdersController {
       let orders = null;
       let error = null;
       try {
-        orders = await this.orderService.getOrderStatistics()
+        orders = await this.orderService.getOrderStatistics();
       } catch (err) {
         if (err instanceof Error) {
           logger.error({ err: Error }, err.message);
@@ -82,6 +87,7 @@ export default class OrdersController {
     async create({request, response}: HttpContext): Promise<void> {
       try {
         const order = await this.orderService.createOrder(request.body());
+        this.io.emit("new_order", "new order");
         return response.status(200).json(order);
       } catch (error) {
         errorResponse(error, response);
